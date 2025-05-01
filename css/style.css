@@ -1,0 +1,27 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.category-block {
+  margin: 30px 0;
+}
+
+.category-title {
+  font-size: 1.5em;
+  color: #003366;
+  margin-bottom: 10px;
+}
+
+.article-list {
+  list-style: none;
+  padding-left: 20px;
+}
+
+.article-item {
+  margin-bottom: 8px;
+}
