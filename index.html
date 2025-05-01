@@ -208,51 +208,105 @@
         }
 
         // Render news articles
-        function renderNews() {
-            const newsContainer = document.getElementById('newsContainer');
-            const loadingElement = document.getElementById('loading');
-            const noResultsElement = document.getElementById('noResults');
-            
-            loadingElement.style.display = 'none';
-            
-            if (filteredArticles.length === 0) {
-                newsContainer.innerHTML = '';
-                noResultsElement.style.display = 'block';
-                return;
-            }
-            
-            noResultsElement.style.display = 'none';
-            
-            let newsHTML = '';
-            
-            filteredArticles.forEach(article => {
-                const formattedDate = formatDate(article.date);
-                const categoryClass = categoryColors[article.category] || "bg-secondary";
-                const summary = article.summary || "No summary available.";
-                
-                newsHTML += `
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card news-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span class="category-badge ${categoryClass} text-white">${article.category}</span>
-                            <span class="date-text">${formattedDate}</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">${article.title}</h5>
-                            <div class="summary-text">${summary}</div>
-                            <a href="${article.link}" target="_blank" class="read-more">Read full article »</a>
-                        </div>
-                        <div class="card-footer">
-                            <small class="source-tag">Source: ${article.source || 'PIB'}</small>
-                        </div>
-                    </div>
-                </div>
-                `;
-            });
-            
-            newsContainer.innerHTML = newsHTML;
-        }
+        // Fix the renderArticles function to use "summary" instead of "content"
+// Find this function in your index.html file and make the following changes:
 
+function renderArticles() {
+  const container = document.getElementById('newsContainer');
+  const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+  const sortOrder = document.getElementById('sortOrder').value;
+
+  let filtered = articles.filter(article =>
+    article.title.toLowerCase().includes(searchQuery) ||
+    // Change this line to check summary instead of content
+    (article.summary && article.summary.toLowerCase().includes(searchQuery))
+  );
+
+  filtered.sort((a, b) => {
+    const dateA = new Date(a.date || a.pubDate || '');
+    const dateB = new Date(b.date || b.pubDate || '');
+    return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+  });
+
+  const grouped = groupByCategory(filtered);
+
+  container.innerHTML = '';
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="alert alert-info text-center" role="alert">
+        No articles found matching your search criteria.
+      </div>
+    `;
+    return;
+  }
+
+  Object.entries(grouped).forEach(([category, items]) => {
+    const section = document.createElement('div');
+    section.className = 'category-section mb-4';
+
+    const header = document.createElement('div');
+    header.className = 'category-header';
+    header.innerHTML = `
+      <span>${category} (${items.length})</span>
+      <i class="fas fa-chevron-down"></i>
+    `;
+    
+    // Initially collapsed for categories with many items
+    const isCollapsed = items.length > 5;
+    if (isCollapsed) {
+      header.classList.add('collapsed');
+    }
+    
+    header.addEventListener('click', () => {
+      const content = section.querySelector('.articles');
+      header.classList.toggle('collapsed');
+      content.style.display = content.style.display === 'none' ? 'block' : 'none';
+    });
+
+    const articleList = document.createElement('div');
+    articleList.className = 'articles mt-3';
+    if (isCollapsed) {
+      articleList.style.display = 'none';
+    }
+
+    items.forEach(article => {
+      const el = document.createElement('div');
+      el.className = 'article';
+      
+      // Extract excerpt - change content to summary here
+      const excerpt = article.summary 
+        ? article.summary.slice(0, 200) + (article.summary.length > 200 ? '...' : '') 
+        : '';
+      
+      el.innerHTML = `
+        <div class="article-title">
+          <a href="${article.link}" target="_blank">${article.title}</a>
+        </div>
+        <div class="article-date">
+          <i class="far fa-calendar-alt"></i>
+          ${formatDate(article.date || article.pubDate || '')}
+        </div>
+        <div class="article-content">${excerpt}</div>
+        <div class="text-end mt-2">
+          <a href="${article.link}" target="_blank" class="btn btn-sm btn-outline-primary">
+            Read More <i class="fas fa-external-link-alt ms-1"></i>
+          </a>
+        </div>
+      `;
+      articleList.appendChild(el);
+    });
+
+    section.appendChild(header);
+    section.appendChild(articleList);
+    container.appendChild(section);
+  });
+  
+  // Update stats
+  document.getElementById('totalArticles').textContent = articles.length;
+  document.getElementById('totalCategories').textContent = Object.keys(grouped).length;
+  document.getElementById('latestDate').textContent = getLatestDate(articles);
+}
         // Format date
         function formatDate(dateString) {
             if (!dateString) return 'Unknown date';
