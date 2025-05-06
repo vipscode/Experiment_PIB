@@ -109,6 +109,16 @@
       font-size: 20px;
     }
 
+    .error-message {
+      color: #d32f2f;
+      text-align: center;
+      padding: 20px;
+      font-size: 16px;
+      background-color: #ffebee;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+
     .refresh-btn {
       background-color: #4CAF50;
       color: white;
@@ -225,25 +235,90 @@
       
       let newsData = [];
 
+      // Function to display error message
+      function showError(message) {
+        dashboard.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-circle"></i> ${message}</div>`;
+        console.error(message);
+      }
+
       // Function to fetch news data
       async function fetchNewsData() {
-        dashboard.innerHTML = '<div class="loader"><i class="fas fa-spinner fa-spin"></i> Loading news...</div>';
-        
         try {
-          const response = await fetch('https://api.pib.gov.in/GovtMinistryOrganization/5/0/E/0/10/1/0');
-          const data = await response.json();
-          newsData = data.PressRelease;
+          dashboard.innerHTML = '<div class="loader"><i class="fas fa-spinner fa-spin"></i> Loading news...</div>';
+          
+          // Use the original API URL from the repository
+          const response = await fetch('https://pib.gov.in/RssMain.aspx?ModId=11&Lang=1&Regid=3');
+          
+          if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.status}`);
+          }
+          
+          const data = await response.text();
+          console.log("API Response:", data.substring(0, 200)); // Log first 200 chars for debugging
+          
+          // Parse the RSS XML feed
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(data, "text/xml");
+          
+          // Get all items from the feed
+          const items = xmlDoc.querySelectorAll("item");
+          
+          if (!items || items.length === 0) {
+            throw new Error("No news items found in the feed");
+          }
+          
+          // Process the items
+          newsData = [];
+          items.forEach(item => {
+            const title = item.querySelector("title")?.textContent || "No title";
+            const link = item.querySelector("link")?.textContent || "";
+            const description = item.querySelector("description")?.textContent || "";
+            const pubDate = item.querySelector("pubDate")?.textContent || "";
+            const ministry = extractMinistry(description) || "Other Ministry";
+            
+            // Extract the PRID from the link
+            const pridMatch = link.match(/PRID=(\d+)/);
+            const prid = pridMatch ? pridMatch[1] : "";
+            
+            newsData.push({
+              Title: title,
+              Content: description,
+              Ministry: ministry,
+              PublishDate: formatDate(pubDate),
+              PRID: prid,
+              Link: link
+            });
+          });
+          
           displayNews(newsData);
         } catch (error) {
-          dashboard.innerHTML = '<div class="loader">Error loading news. Please try again later.</div>';
-          console.error('Error fetching news:', error);
+          showError(`Error loading news: ${error.message}. Please try again later.`);
+        }
+      }
+
+      // Extract ministry from description (simple implementation)
+      function extractMinistry(description) {
+        const ministryRegex = /Ministry of ([A-Za-z &,]+)/;
+        const match = description.match(ministryRegex);
+        return match ? `Ministry of ${match[1]}` : "Other Ministry";
+      }
+
+      // Format date
+      function formatDate(dateStr) {
+        try {
+          const date = new Date(dateStr);
+          return date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+          });
+        } catch (e) {
+          return dateStr;
         }
       }
 
       // Function to generate article summary
       function generateSummary(content) {
-        // This is a simple summary generator that takes the first few sentences
-        // In a real implementation, you might want to use an AI service or more sophisticated algorithm
         if (!content) return "No summary available.";
         
         // Clean the content by removing HTML tags
@@ -292,7 +367,7 @@
                 <i class="far fa-calendar-alt"></i> ${item.PublishDate || 'Unknown Date'}
               </div>
               <div class="card-actions">
-                <a href="https://pib.gov.in/PressReleasePage.aspx?PRID=${item.PRID}" class="btn" target="_blank">
+                <a href="${item.Link}" class="btn" target="_blank">
                   <i class="fas fa-external-link-alt"></i> Read More
                 </a>
               </div>
