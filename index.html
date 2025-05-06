@@ -76,12 +76,6 @@
       font-style: italic;
     }
 
-    .summary-loader {
-      font-size: 12px;
-      color: #888;
-      font-style: italic;
-    }
-
     .card-meta {
       font-size: 12px;
       color: #888;
@@ -113,16 +107,6 @@
       text-align: center;
       padding: 20px;
       font-size: 20px;
-    }
-
-    .error-message {
-      color: #d32f2f;
-      text-align: center;
-      padding: 20px;
-      font-size: 16px;
-      background-color: #ffebee;
-      border-radius: 5px;
-      margin: 20px 0;
     }
 
     .refresh-btn {
@@ -234,142 +218,75 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      // Get the necessary DOM elements
       const dashboard = document.getElementById('newsDashboard');
       const searchBox = document.getElementById('searchBox');
       const refreshBtn = document.getElementById('refreshBtn');
       const filterContainer = document.getElementById('filterContainer');
       
-      let newsData = [];
-      
-      // Hardcoded news items since PIB APIs are unreliable
-      const healthNewsItems = [
+      // Hardcoded news data with pre-generated summaries
+      const newsData = [
         {
           title: "Dr. Mansukh Mandaviya Inaugurates Global Ayush Investment and Innovation Summit 2023",
           link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1925650",
-          description: "Union Minister for Health and Family Welfare and Chemicals & Fertilizers, Dr. Mansukh Mandaviya today inaugurated the Global Ayush Investment and Innovation Summit (GAIIS) 2023 in the presence of Shri Sarbananda Sonowal, Union Minister of Ayush.",
-          pubDate: "May 03, 2023",
           ministry: "Ministry of AYUSH",
-          prid: "1925650"
+          date: "May 03, 2023",
+          summary: "Union Minister for Health and Family Welfare and Chemicals & Fertilizers, Dr. Mansukh Mandaviya inaugurated the Global Ayush Investment and Innovation Summit (GAIIS) 2023. The summit focuses on attracting investments in traditional medicine systems and promoting innovation in the AYUSH sector."
         },
         {
           title: "WHO and India Establish Global Centre for Traditional Medicine",
           link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1922150",
-          description: "World Health Organization (WHO) and the Government of India today signed an agreement to establish the WHO Global Centre for Traditional Medicine. This global knowledge centre for traditional medicine, supported by an investment of USD 250 million from the Government of India, aims to harness the potential of traditional medicine from across the world through modern science and technology to improve the health of people and the planet.",
-          pubDate: "April 25, 2023",
           ministry: "Ministry of AYUSH",
-          prid: "1922150"
+          date: "April 25, 2023",
+          summary: "World Health Organization (WHO) and the Government of India signed an agreement to establish the WHO Global Centre for Traditional Medicine. This global knowledge centre, supported by an investment of USD 250 million from India, aims to harness the potential of traditional medicine through modern science and technology."
         },
         {
           title: "Union Health Minister launches multiple health initiatives at National Workshop on PM-ABHIM",
           link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1920001",
-          description: "Dr. Mansukh Mandaviya, Union Minister for Health and Family Welfare today launched multiple health initiatives at the National Workshop on Prime Minister – Ayushman Bharat Health Infrastructure Mission (PM-ABHIM) held here today. The Union Health Minister launched these initiatives in the presence of Dr. Bharati Pravin Pawar, Union Minister of State for Health and Family Welfare and Smt. Anupriya Patel, Union Minister of State for Health and Family Welfare.",
-          pubDate: "April 18, 2023",
           ministry: "Ministry of Health and Family Welfare",
-          prid: "1920001"
+          date: "April 18, 2023",
+          summary: "Dr. Mansukh Mandaviya launched multiple health initiatives at the National Workshop on Prime Minister – Ayushman Bharat Health Infrastructure Mission (PM-ABHIM). These initiatives focus on strengthening healthcare infrastructure and improving access to quality healthcare services across the country."
         },
         {
           title: "Government Approves 22 New AIIMS across the country",
           link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1918450",
-          description: "The Union Cabinet has approved the setting up of 22 new All India Institute of Medical Sciences (AIIMS) in various states across the country to expand quality healthcare services. The new institutes aim to reduce the burden on existing healthcare facilities and provide advanced medical education.",
-          pubDate: "April 12, 2023",
           ministry: "Ministry of Health and Family Welfare",
-          prid: "1918450"
+          date: "April 12, 2023",
+          summary: "The Union Cabinet has approved the setting up of 22 new All India Institutes of Medical Sciences (AIIMS) across various states. This expansion aims to reduce the burden on existing healthcare facilities and provide advanced medical education to address the shortage of healthcare professionals."
         },
         {
           title: "National Pharmaceutical Pricing Authority fixes ceiling prices of essential medicines",
           link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1916222",
-          description: "The National Pharmaceutical Pricing Authority (NPPA) has fixed the ceiling prices of several essential medicines to ensure their affordability and accessibility. This decision comes under the Drug Price Control Order (DPCO) and aims to reduce the financial burden on citizens.",
-          pubDate: "April 5, 2023",
           ministry: "Ministry of Chemicals and Fertilizers",
-          prid: "1916222"
+          date: "April 5, 2023",
+          summary: "The National Pharmaceutical Pricing Authority (NPPA) has fixed ceiling prices for several essential medicines under the Drug Price Control Order. This move aims to ensure affordability and accessibility of crucial medications for all citizens, particularly benefiting lower income populations."
         },
         {
           title: "Ayushman Bharat Digital Mission Reaches 10 Million Digital Health Records",
           link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1914100",
-          description: "Ayushman Bharat Digital Mission (ABDM) has successfully created over 10 million digital health records since its nationwide launch. This significant milestone demonstrates the rapid adoption of digital healthcare solutions in India, enhancing accessible, affordable, and quality healthcare for citizens.",
-          pubDate: "March 28, 2023",
           ministry: "Ministry of Health and Family Welfare",
-          prid: "1914100"
+          date: "March 28, 2023",
+          summary: "Ayushman Bharat Digital Mission (ABDM) has successfully created over 10 million digital health records nationwide. This milestone demonstrates the rapid adoption of digital healthcare solutions in India, enhancing accessible and affordable quality healthcare for citizens."
         },
         {
           title: "India's Pharmaceutical Exports Cross $25 Billion",
           link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1912345",
-          description: "India's pharmaceutical exports have surpassed $25 billion for the first time, marking a significant milestone for the sector. The growth has been attributed to increased demand for Indian generic medicines, vaccines, and API globally, affirming India's position as the 'Pharmacy of the World'.",
-          pubDate: "March 20, 2023",
           ministry: "Ministry of Chemicals and Fertilizers",
-          prid: "1912345"
+          date: "March 20, 2023",
+          summary: "India's pharmaceutical exports have surpassed $25 billion for the first time, marking a significant milestone for the sector. The growth has been attributed to increased global demand for Indian generic medicines, vaccines, and APIs, affirming India's position as the 'Pharmacy of the World'."
         },
         {
           title: "National Medical Commission Issues New Guidelines for MBBS Education",
           link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1910230",
-          description: "The National Medical Commission (NMC) has issued new guidelines for MBBS education emphasizing early clinical exposure, integrated teaching, and skill development. The revised curriculum aims to create competent medical professionals equipped to address contemporary healthcare challenges.",
-          pubDate: "March 15, 2023",
           ministry: "Ministry of Health and Family Welfare",
-          prid: "1910230"
+          date: "March 15, 2023",
+          summary: "The National Medical Commission (NMC) has issued new guidelines for MBBS education emphasizing early clinical exposure, integrated teaching, and skill development. These curriculum changes aim to create competent medical professionals better equipped to address contemporary healthcare challenges."
         }
       ];
 
-      // Function to display error message
-      function showError(message) {
-        dashboard.innerHTML = `<div class="error-message"><i class="fas fa-exclamation-circle"></i> ${message}</div>`;
-        console.error(message);
-      }
-
-      // Function to generate article summary
-      function generateSummary(content) {
-        if (!content) return "No summary available.";
-        
-        // Clean the content by removing HTML tags
-        const cleanContent = content.replace(/<[^>]*>/g, '');
-        
-        // Get the first 2-3 sentences (approximately 3-4 lines)
-        const sentences = cleanContent.split(/[.!?]+/);
-        let summary = sentences.slice(0, 3).join('. ').trim();
-        
-        // Add ellipsis if the content is longer
-        if (sentences.length > 3) {
-          summary += '...';
-        }
-        
-        // Make sure the summary isn't too long (max ~250 characters)
-        if (summary.length > 250) {
-          summary = summary.substring(0, 250) + '...';
-        }
-        
-        return summary || "No summary available.";
-      }
-
-      // Function to fetch article content for better summary (using a proxy would be ideal)
-      async function fetchArticleContent(url, summaryElement) {
-        try {
-          // NOTE: In a real implementation, you would need a backend proxy or CORS-enabled endpoint
-          // Direct fetching from client-side JS will face CORS issues with PIB website
-          
-          // For demo purposes, we'll use the existing description as summary since we can't fetch the page
-          // But in a real implementation with a proxy backend, you'd want to replace this with actual fetching
-
-          // Let user know we're generating a more comprehensive summary
-          summaryElement.innerHTML = '<span class="summary-loader"><i class="fas fa-spinner fa-spin"></i> Generating comprehensive summary...</span>';
-          
-          // Simulate delay for summary generation
-          await new Promise(resolve => setTimeout(resolve, 1500));
-          
-          // Generate an extended summary based on the article content
-          // This is where you'd parse the actual article content in a real implementation
-          const existingDescription = summaryElement.getAttribute('data-description');
-          const enhancedSummary = existingDescription ? 
-            generateSummary(existingDescription + " The article provides further details on implementation, timeline, budget allocation, and expected impact on the healthcare ecosystem in India.") : 
-            "Unable to generate a comprehensive summary at this time.";
-            
-          summaryElement.innerHTML = enhancedSummary;
-        } catch (error) {
-          console.error("Error fetching article content:", error);
-          summaryElement.innerHTML = "Summary could not be generated. Please click 'Read More' to view the full article.";
-        }
-      }
-
-      // Function to display news
+      // Function to display news cards
       function displayNews(news) {
+        // Clear the dashboard
         dashboard.innerHTML = '';
         
         if (!news || news.length === 0) {
@@ -377,21 +294,19 @@
           return;
         }
 
+        // Create a card for each news item
         news.forEach(item => {
           const card = document.createElement('div');
           card.className = 'news-card';
           card.dataset.category = item.ministry;
 
-          // Generate initial summary from available description
-          const initialSummary = generateSummary(item.description);
-
           card.innerHTML = `
             <div class="card-header">${item.ministry || 'Unknown Ministry'}</div>
             <div class="card-body">
               <h3 class="card-title">${item.title || 'No Title'}</h3>
-              <div class="card-summary" data-description="${item.description || ''}" data-url="${item.link || ''}">${initialSummary}</div>
+              <div class="card-summary">${item.summary || 'No summary available.'}</div>
               <div class="card-meta">
-                <i class="far fa-calendar-alt"></i> ${item.pubDate || 'Unknown Date'}
+                <i class="far fa-calendar-alt"></i> ${item.date || 'Unknown Date'}
               </div>
               <div class="card-actions">
                 <a href="${item.link}" class="btn" target="_blank">
@@ -402,65 +317,22 @@
           `;
 
           dashboard.appendChild(card);
-          
-          // Get the summary element for this card
-          const summaryElement = card.querySelector('.card-summary');
-          
-          // Add a click event to enhance the summary when the user interacts with it
-          summaryElement.addEventListener('click', function() {
-            const url = this.getAttribute('data-url');
-            if (url && this.textContent === initialSummary) {
-              fetchArticleContent(url, this);
-            }
-          });
         });
       }
 
-      // Function to load news data (using hardcoded data)
-      function loadNewsData() {
-        dashboard.innerHTML = '<div class="loader"><i class="fas fa-spinner fa-spin"></i> Loading news...</div>';
-        
-        try {
-          // Transform the hardcoded data to match our expected format
-          newsData = healthNewsItems.map(item => ({
-            Title: item.title,
-            Content: item.description,
-            Ministry: item.ministry,
-            PublishDate: item.pubDate,
-            PRID: item.prid,
-            Link: item.link
-          }));
-          
-          displayNews(newsData);
-        } catch (error) {
-          showError(`Error loading news: ${error.message}. Please try again later.`);
-        }
-      }
-
-      // Search functionality
-      searchBox.addEventListener('input', function () {
-        const searchTerm = this.value.toLowerCase();
-        const filteredNews = newsData.filter(item => {
+      // Function to filter news by search term
+      function filterBySearch(searchTerm) {
+        searchTerm = searchTerm.toLowerCase();
+        return newsData.filter(item => {
           return (
-            (item.Title && item.Title.toLowerCase().includes(searchTerm)) ||
-            (item.Content && item.Content.toLowerCase().includes(searchTerm)) ||
-            (item.Ministry && item.Ministry.toLowerCase().includes(searchTerm))
+            (item.title && item.title.toLowerCase().includes(searchTerm)) ||
+            (item.summary && item.summary.toLowerCase().includes(searchTerm)) ||
+            (item.ministry && item.ministry.toLowerCase().includes(searchTerm))
           );
         });
-        
-        displayNews(filteredNews);
-        
-        // Also apply current category filter
-        const activeFilter = document.querySelector('.filter-btn.active');
-        if (activeFilter && activeFilter.dataset.category !== 'all') {
-          filterByCategory(activeFilter.dataset.category);
-        }
-      });
+      }
 
-      // Refresh button
-      refreshBtn.addEventListener('click', loadNewsData);
-
-      // Filter functionality
+      // Function to filter news by category
       function filterByCategory(category) {
         const cards = document.querySelectorAll('.news-card');
         
@@ -473,23 +345,42 @@
         });
       }
 
-      filterContainer.addEventListener('click', function (e) {
+      // Search box event listener
+      searchBox.addEventListener('input', function() {
+        const searchTerm = this.value;
+        const filteredNews = filterBySearch(searchTerm);
+        displayNews(filteredNews);
+        
+        // Re-apply active category filter
+        const activeFilter = document.querySelector('.filter-btn.active');
+        if (activeFilter && activeFilter.dataset.category !== 'all') {
+          filterByCategory(activeFilter.dataset.category);
+        }
+      });
+
+      // Refresh button event listener
+      refreshBtn.addEventListener('click', function() {
+        // In a real app, this would fetch fresh data
+        // For now, just redisplay the current data
+        displayNews(newsData);
+      });
+
+      // Filter buttons event listener
+      filterContainer.addEventListener('click', function(e) {
         if (e.target.classList.contains('filter-btn')) {
-          // Remove active class from all buttons
+          // Update active button
           document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.classList.remove('active');
           });
-          
-          // Add active class to clicked button
           e.target.classList.add('active');
           
-          // Apply filter
+          // Apply the filter
           filterByCategory(e.target.dataset.category);
         }
       });
 
-      // Initial data load
-      loadNewsData();
+      // Initial display of news
+      displayNews(newsData);
     });
   </script>
 </body>
