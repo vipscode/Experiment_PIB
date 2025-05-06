@@ -1,458 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PIB Health News Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <!-- Add Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <style>
-    :root {
-      --primary-blue: #1e40af;
-      --secondary-blue: #1e3a8a;
-      --light-blue: #dbeafe;
-      --hover-blue: #3b82f6;
-      --text-blue: #1e3a8a;
-      --accent-blue: #60a5fa;
-    }
-    
     body {
-      background-color: #f0f9ff;
-      padding-bottom: 4rem;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      background-color: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+      border-radius: 5px 5px 0 0;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .news-card {
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .news-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+    }
+
+    .card-body {
+      padding: 15px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      margin-bottom: 10px;
       color: #333;
     }
-    
-    .dashboard-header {
-      background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+
+    .card-summary {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-left: 3px solid #4CAF50;
+      font-style: italic;
+    }
+
+    .card-meta {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 8px 15px;
+      background-color: #4CAF50;
       color: white;
-      padding: 2rem 0;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      border-radius: 0 0 10px 10px;
-    }
-    
-    .dashboard-title {
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-    
-    .stats-card {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
-      transition: transform 0.2s;
-    }
-    
-    .stats-card:hover {
-      transform: translateY(-5px);
-    }
-    
-    .stats-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--primary-blue);
-    }
-    
-    .stats-label {
-      color: #6c757d;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    .category-header {
-      font-size: 1.25rem;
-      font-weight: 600;
+      border: none;
+      border-radius: 3px;
       cursor: pointer;
-      padding: 0.75rem 1rem;
-      background-color: var(--light-blue);
-      border-radius: 8px;
-      margin-top: 1rem;
-      border-left: 4px solid var(--primary-blue);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background-color 0.2s;
-    }
-    
-    .category-header:hover {
-      background-color: #bfdbfe;
-    }
-    
-    .category-header i {
-      transition: transform 0.3s;
-    }
-    
-    .category-header.collapsed i {
-      transform: rotate(-90deg);
-    }
-    
-    .article {
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-      background-color: white;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      transition: box-shadow 0.2s;
-    }
-    
-    .article:hover {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .article-title a {
-      font-weight: 600;
       text-decoration: none;
-      color: var(--text-blue);
-      display: block;
-      margin-bottom: 0.5rem;
+      font-size: 14px;
+      display: inline-block;
     }
-    
-    .article-title a:hover {
-      color: var(--hover-blue);
-      text-decoration: underline;
+
+    .btn:hover {
+      background-color: #45a049;
     }
-    
-    .article-date {
-      font-size: 0.85rem;
-      color: #6c757d;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-    }
-    
-    .article-date i {
-      margin-right: 0.5rem;
-      color: var(--accent-blue);
-    }
-    
-    .article-content {
-      color: #4b5563;
-      line-height: 1.6;
-    }
-    
-    .search-container {
-      background-color: white;
-      border-radius: 8px;
-      padding: 1.25rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      margin-bottom: 2rem;
-    }
-    
-    .form-control, .form-select {
-      border: 2px solid #e5e7eb;
-      border-radius: 6px;
-      padding: 0.75rem 1rem;
-    }
-    
-    .form-control:focus, .form-select:focus {
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 0 0.25rem rgba(96, 165, 250, 0.25);
-    }
-    
-    .search-input-group {
-      position: relative;
-    }
-    
-    .search-icon {
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #9ca3af;
-    }
-    
-    #searchInput {
-      padding-left: 2.5rem;
-    }
-    
-    footer {
-      background-color: var(--secondary-blue);
-      color: white;
-      padding: 1.5rem 0;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
+
+    .loader {
       text-align: center;
-      font-size: 0.9rem;
+      padding: 20px;
+      font-size: 20px;
     }
-    
-    .loading-spinner {
+
+    .refresh-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 20px;
+      display: block;
+      margin: 20px auto;
+    }
+
+    .refresh-btn:hover {
+      background-color: #45a049;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      padding: 20px;
+      color: #888;
+      font-size: 14px;
+    }
+
+    .search-container {
+      margin: 20px 0;
       display: flex;
       justify-content: center;
-      align-items: center;
-      min-height: 200px;
     }
-    
+
+    .search-box {
+      padding: 10px;
+      width: 300px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .filter-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background-color: #f1f1f1;
+      color: #333;
+      border: none;
+      padding: 8px 15px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    .filter-btn.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+
     @media (max-width: 768px) {
-      .stats-card {
-        margin-bottom: 1rem;
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .search-box {
+        width: 100%;
       }
     }
   </style>
 </head>
+
 <body>
-  <!-- Header -->
-  <header class="dashboard-header">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-          <h1 class="dashboard-title mb-2">
-            <i class="fas fa-heartbeat me-2"></i>PIB Health News Dashboard
-          </h1>
-          <p class="mb-0">Latest health news and updates from Press Information Bureau, Government of India</p>
-        </div>
-        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-          <button id="refreshBtn" class="btn btn-light">
-            <i class="fas fa-sync-alt me-2"></i>Refresh Data
-          </button>
-        </div>
-      </div>
-    </div>
-  </header>
-
   <div class="container">
-    <!-- Stats Cards -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="stats-card">
-          <div class="stats-value" id="totalArticles">0</div>
-          <div class="stats-label">Total Articles</div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="stats-card">
-          <div class="stats-value" id="totalCategories">0</div>
-          <div class="stats-label">Categories</div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="stats-card">
-          <div class="stats-value" id="latestDate">-</div>
-          <div class="stats-label">Latest Update</div>
-        </div>
-      </div>
+    <div class="header">
+      <h1><i class="fas fa-heartbeat"></i> PIB Health News Dashboard</h1>
+      <p>Stay updated with the latest health news from Press Information Bureau</p>
     </div>
 
-    <!-- Search & Filter Section -->
     <div class="search-container">
-      <div class="row">
-        <div class="col-md-6 mb-3 mb-md-0">
-          <label for="searchInput" class="form-label">Search Articles</label>
-          <div class="search-input-group">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" id="searchInput" class="form-control" placeholder="Search by keyword...">
-          </div>
-        </div>
-        <div class="col-md-4 mb-3 mb-md-0">
-          <label for="sortOrder" class="form-label">Sort By</label>
-          <select id="sortOrder" class="form-select">
-            <option value="desc">Newest First</option>
-            <option value="asc">Oldest First</option>
-          </select>
-        </div>
-        <div class="col-md-2">
-          <label for="clearSearch" class="form-label">&nbsp;</label>
-          <button id="clearSearch" class="btn btn-outline-secondary w-100">Clear</button>
-        </div>
+      <input type="text" class="search-box" id="searchBox" placeholder="Search news...">
+    </div>
+
+    <div class="filter-container" id="filterContainer">
+      <button class="filter-btn active" data-category="all">All</button>
+      <button class="filter-btn" data-category="Ministry of Health and Family Welfare">Health Ministry</button>
+      <button class="filter-btn" data-category="Ministry of AYUSH">AYUSH</button>
+      <button class="filter-btn" data-category="Ministry of Chemicals and Fertilizers">Chemicals & Pharma</button>
+    </div>
+
+    <div class="dashboard" id="newsDashboard">
+      <div class="loader">
+        <i class="fas fa-spinner fa-spin"></i> Loading news...
       </div>
     </div>
 
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="loading-spinner">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-    </div>
+    <button class="refresh-btn" id="refreshBtn">
+      <i class="fas fa-sync-alt"></i> Refresh News
+    </button>
 
-    <!-- News Container -->
-    <div id="newsContainer"></div>
+    <div class="footer">
+      <p>© 2023 PIB Health News Dashboard | Data sourced from Press Information Bureau</p>
+    </div>
   </div>
 
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <p class="mb-0">© <span id="currentYear"></span> PIB Health News Dashboard | Data sourced from Press Information Bureau, Government of India</p>
-    </div>
-  </footer>
-
   <script>
-    let articles = [];
-
-    // Set current year in footer
-    document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-    function groupByCategory(data) {
-      return data.reduce((acc, article) => {
-        const cat = article.category || "Others";
-        if (!acc[cat]) acc[cat] = [];
-        acc[cat].push(article);
-        return acc;
-      }, {});
-    }
-
-    function formatDate(dateStr) {
-      const date = new Date(dateStr);
-      if (isNaN(date)) return dateStr;
+    document.addEventListener('DOMContentLoaded', function () {
+      const dashboard = document.getElementById('newsDashboard');
+      const searchBox = document.getElementById('searchBox');
+      const refreshBtn = document.getElementById('refreshBtn');
+      const filterContainer = document.getElementById('filterContainer');
       
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    }
+      let newsData = [];
 
-    function getLatestDate(articles) {
-      if (!articles.length) return "-";
-      
-      const dates = articles.map(a => new Date(a.date || a.pubDate || ''))
-                           .filter(d => !isNaN(d));
-      
-      if (!dates.length) return "-";
-      
-      const latest = new Date(Math.max(...dates));
-      return formatDate(latest);
-    }
-
-    function renderArticles() {
-      const container = document.getElementById('newsContainer');
-      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-      const sortOrder = document.getElementById('sortOrder').value;
-
-      let filtered = articles.filter(article =>
-        article.title.toLowerCase().includes(searchQuery) ||
-        (article.content && article.content.toLowerCase().includes(searchQuery))
-      );
-
-      filtered.sort((a, b) => {
-        const dateA = new Date(a.date || a.pubDate || '');
-        const dateB = new Date(b.date || b.pubDate || '');
-        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
-      });
-
-      const grouped = groupByCategory(filtered);
-
-      container.innerHTML = '';
-      
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="alert alert-info text-center" role="alert">
-            No articles found matching your search criteria.
-          </div>
-        `;
-        return;
+      // Function to fetch news data
+      async function fetchNewsData() {
+        dashboard.innerHTML = '<div class="loader"><i class="fas fa-spinner fa-spin"></i> Loading news...</div>';
+        
+        try {
+          const response = await fetch('https://api.pib.gov.in/GovtMinistryOrganization/5/0/E/0/10/1/0');
+          const data = await response.json();
+          newsData = data.PressRelease;
+          displayNews(newsData);
+        } catch (error) {
+          dashboard.innerHTML = '<div class="loader">Error loading news. Please try again later.</div>';
+          console.error('Error fetching news:', error);
+        }
       }
 
-      Object.entries(grouped).forEach(([category, items]) => {
-        const section = document.createElement('div');
-        section.className = 'category-section mb-4';
-
-        const header = document.createElement('div');
-        header.className = 'category-header';
-        header.innerHTML = `
-          <span>${category} (${items.length})</span>
-          <i class="fas fa-chevron-down"></i>
-        `;
+      // Function to generate article summary
+      function generateSummary(content) {
+        // This is a simple summary generator that takes the first few sentences
+        // In a real implementation, you might want to use an AI service or more sophisticated algorithm
+        if (!content) return "No summary available.";
         
-        // Initially collapsed for categories with many items
-        const isCollapsed = items.length > 5;
-        if (isCollapsed) {
-          header.classList.add('collapsed');
+        // Clean the content by removing HTML tags
+        const cleanContent = content.replace(/<[^>]*>/g, '');
+        
+        // Get the first 2-3 sentences (approximately 3-4 lines)
+        const sentences = cleanContent.split(/[.!?]+/);
+        let summary = sentences.slice(0, 3).join('. ').trim();
+        
+        // Add ellipsis if the content is longer
+        if (sentences.length > 3) {
+          summary += '...';
         }
         
-        header.addEventListener('click', () => {
-          const content = section.querySelector('.articles');
-          header.classList.toggle('collapsed');
-          content.style.display = content.style.display === 'none' ? 'block' : 'none';
-        });
+        // Make sure the summary isn't too long (max ~250 characters)
+        if (summary.length > 250) {
+          summary = summary.substring(0, 250) + '...';
+        }
+        
+        return summary || "No summary available.";
+      }
 
-        const articleList = document.createElement('div');
-        articleList.className = 'articles mt-3';
-        if (isCollapsed) {
-          articleList.style.display = 'none';
+      // Function to display news
+      function displayNews(news) {
+        dashboard.innerHTML = '';
+        
+        if (!news || news.length === 0) {
+          dashboard.innerHTML = '<div class="loader">No news available at the moment.</div>';
+          return;
         }
 
-        items.forEach(article => {
-          const el = document.createElement('div');
-          el.className = 'article';
-          
-          // Extract excerpt (first 200 chars)
-          const excerpt = article.content 
-            ? article.content.slice(0, 200) + (article.content.length > 200 ? '...' : '') 
-            : '';
-          
-          el.innerHTML = `
-            <div class="article-title">
-              <a href="${article.link}" target="_blank">${article.title}</a>
-            </div>
-            <div class="article-date">
-              <i class="far fa-calendar-alt"></i>
-              ${formatDate(article.date || article.pubDate || '')}
-            </div>
-            <div class="article-content">${excerpt}</div>
-            <div class="text-end mt-2">
-              <a href="${article.link}" target="_blank" class="btn btn-sm btn-outline-primary">
-                Read More <i class="fas fa-external-link-alt ms-1"></i>
-              </a>
+        news.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'news-card';
+          card.dataset.category = item.Ministry;
+
+          // Generate a summary from the content
+          const summary = generateSummary(item.Content);
+
+          card.innerHTML = `
+            <div class="card-header">${item.Ministry || 'Unknown Ministry'}</div>
+            <div class="card-body">
+              <h3 class="card-title">${item.Title || 'No Title'}</h3>
+              <div class="card-summary">${summary}</div>
+              <div class="card-meta">
+                <i class="far fa-calendar-alt"></i> ${item.PublishDate || 'Unknown Date'}
+              </div>
+              <div class="card-actions">
+                <a href="https://pib.gov.in/PressReleasePage.aspx?PRID=${item.PRID}" class="btn" target="_blank">
+                  <i class="fas fa-external-link-alt"></i> Read More
+                </a>
+              </div>
             </div>
           `;
-          articleList.appendChild(el);
-        });
 
-        section.appendChild(header);
-        section.appendChild(articleList);
-        container.appendChild(section);
+          dashboard.appendChild(card);
+        });
+      }
+
+      // Search functionality
+      searchBox.addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+        const filteredNews = newsData.filter(item => {
+          return (
+            (item.Title && item.Title.toLowerCase().includes(searchTerm)) ||
+            (item.Content && item.Content.toLowerCase().includes(searchTerm)) ||
+            (item.Ministry && item.Ministry.toLowerCase().includes(searchTerm))
+          );
+        });
+        
+        displayNews(filteredNews);
+        
+        // Also apply current category filter
+        const activeFilter = document.querySelector('.filter-btn.active');
+        if (activeFilter && activeFilter.dataset.category !== 'all') {
+          filterByCategory(activeFilter.dataset.category);
+        }
       });
-      
-      // Update stats
-      document.getElementById('totalArticles').textContent = articles.length;
-      document.getElementById('totalCategories').textContent = Object.keys(grouped).length;
-      document.getElementById('latestDate').textContent = getLatestDate(articles);
-    }
 
-    // Event listeners
-    document.getElementById('searchInput').addEventListener('input', renderArticles);
-    document.getElementById('sortOrder').addEventListener('change', renderArticles);
-    document.getElementById('clearSearch').addEventListener('click', () => {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('sortOrder').value = 'desc';
-      renderArticles();
-    });
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-      loadData();
-    });
+      // Refresh button
+      refreshBtn.addEventListener('click', fetchNewsData);
 
-    function loadData() {
-      // Show loading spinner
-      document.getElementById('loadingSpinner').style.display = 'flex';
-      document.getElementById('newsContainer').innerHTML = '';
-      
-      fetch('data/categorized_data.json')
-        .then(response => response.json())
-        .then(data => {
-          articles = data;
-          // Hide loading spinner
-          document.getElementById('loadingSpinner').style.display = 'none';
-          renderArticles();
-        })
-        .catch(error => {
-          console.error('Error loading data:', error);
-          document.getElementById('loadingSpinner').style.display = 'none';
-          document.getElementById('newsContainer').innerHTML = `
-            <div class="alert alert-danger" role="alert">
-              Error loading data. Please try refreshing the page.
-            </div>
-          `;
+      // Filter functionality
+      function filterByCategory(category) {
+        const cards = document.querySelectorAll('.news-card');
+        
+        cards.forEach(card => {
+          if (category === 'all' || card.dataset.category === category) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
         });
-    }
+      }
 
-    // Initial load
-    loadData();
+      filterContainer.addEventListener('click', function (e) {
+        if (e.target.classList.contains('filter-btn')) {
+          // Remove active class from all buttons
+          document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          
+          // Add active class to clicked button
+          e.target.classList.add('active');
+          
+          // Apply filter
+          filterByCategory(e.target.dataset.category);
+        }
+      });
+
+      // Initial data fetch
+      fetchNewsData();
+    });
   </script>
 </body>
+
 </html>
