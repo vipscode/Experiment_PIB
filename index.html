@@ -364,7 +364,7 @@
     function loadData() {
       document.getElementById('loadingSpinner').style.display = 'flex';
       document.getElementById('newsContainer').innerHTML = '';
-      fetch('https://raw.githubusercontent.com/vipscode/Experiment_PIB/main/data/categorized_data.json')
+      fetch('https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/vipscode/Experiment_PIB/main/data/categorized_data.json')
         .then(response => response.json())
         .then(data => {
           articles = data;
