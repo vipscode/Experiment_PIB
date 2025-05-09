@@ -1,458 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PIB Health News Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <!-- Add Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <style>
-    :root {
-      --primary-blue: #1e40af;
-      --secondary-blue: #1e3a8a;
-      --light-blue: #dbeafe;
-      --hover-blue: #3b82f6;
-      --text-blue: #1e3a8a;
-      --accent-blue: #60a5fa;
-    }
-    
-    body {
-      background-color: #f0f9ff;
-      padding-bottom: 4rem;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-      color: #333;
-    }
-    
-    .dashboard-header {
-      background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-      color: white;
-      padding: 2rem 0;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      border-radius: 0 0 10px 10px;
-    }
-    
-    .dashboard-title {
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-    
-    .stats-card {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
-      transition: transform 0.2s;
-    }
-    
-    .stats-card:hover {
-      transform: translateY(-5px);
-    }
-    
-    .stats-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--primary-blue);
-    }
-    
-    .stats-label {
-      color: #6c757d;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    .category-header {
-      font-size: 1.25rem;
-      font-weight: 600;
-      cursor: pointer;
-      padding: 0.75rem 1rem;
-      background-color: var(--light-blue);
-      border-radius: 8px;
-      margin-top: 1rem;
-      border-left: 4px solid var(--primary-blue);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background-color 0.2s;
-    }
-    
-    .category-header:hover {
-      background-color: #bfdbfe;
-    }
-    
-    .category-header i {
-      transition: transform 0.3s;
-    }
-    
-    .category-header.collapsed i {
-      transform: rotate(-90deg);
-    }
-    
-    .article {
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-      background-color: white;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      transition: box-shadow 0.2s;
-    }
-    
-    .article:hover {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .article-title a {
-      font-weight: 600;
-      text-decoration: none;
-      color: var(--text-blue);
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-    
-    .article-title a:hover {
-      color: var(--hover-blue);
-      text-decoration: underline;
-    }
-    
-    .article-date {
-      font-size: 0.85rem;
-      color: #6c757d;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-    }
-    
-    .article-date i {
-      margin-right: 0.5rem;
-      color: var(--accent-blue);
-    }
-    
-    .article-content {
-      color: #4b5563;
-      line-height: 1.6;
-    }
-    
-    .search-container {
-      background-color: white;
-      border-radius: 8px;
-      padding: 1.25rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      margin-bottom: 2rem;
-    }
-    
-    .form-control, .form-select {
-      border: 2px solid #e5e7eb;
-      border-radius: 6px;
-      padding: 0.75rem 1rem;
-    }
-    
-    .form-control:focus, .form-select:focus {
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 0 0.25rem rgba(96, 165, 250, 0.25);
-    }
-    
-    .search-input-group {
-      position: relative;
-    }
-    
-    .search-icon {
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #9ca3af;
-    }
-    
-    #searchInput {
-      padding-left: 2.5rem;
-    }
-    
-    footer {
-      background-color: var(--secondary-blue);
-      color: white;
-      padding: 1.5rem 0;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      text-align: center;
-      font-size: 0.9rem;
-    }
-    
-    .loading-spinner {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 200px;
-    }
-    
-    @media (max-width: 768px) {
-      .stats-card {
-        margin-bottom: 1rem;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIB Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 95%;
+            margin: 20px auto;
+        }
+        .header {
+            background-color: #005792;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .filters {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .filter-group {
+            margin-bottom: 15px;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .filter-group select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .categories {
+            background-color: #f8f8f8;
+            padding: 20px;
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+        .category {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .category:hover {
+            background-color: #e9e9e9;
+        }
+        .category.active {
+            background-color: #005792;
+            color: white;
+        }
+        .articles {
+            padding: 20px;
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+        .article {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .article h3 {
+            margin-top: 0;
+            color: #005792;
+        }
+        .article-meta {
+            color: #777;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .article-summary {
+            background-color: #f0f7ff;
+            padding: 10px;
+            border-left: 3px solid #005792;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .article-link {
+            display: block;
+            margin-top: 10px;
+            color: #005792;
+            text-decoration: none;
+        }
+        .article-link:hover {
+            text-decoration: underline;
+        }
+        .no-articles {
+            color: #777;
+            font-style: italic;
+        }
+        .category-count {
+            float: right;
+            background-color: #ddd;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            color: #333;
+        }
+        .active .category-count {
+            background-color: white;
+            color: #005792;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="dashboard-header">
     <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-8">
-          <h1 class="dashboard-title mb-2">
-            <i class="fas fa-heartbeat me-2"></i>PIB Health News Dashboard
-          </h1>
-          <p class="mb-0">Latest health news and updates from Press Information Bureau, Government of India</p>
+        <div class="header">
+            <h1>PIB Dashboard</h1>
         </div>
-        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-          <button id="refreshBtn" class="btn btn-light">
-            <i class="fas fa-sync-alt me-2"></i>Refresh Data
-          </button>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <div class="container">
-    <!-- Stats Cards -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="stats-card">
-          <div class="stats-value" id="totalArticles">0</div>
-          <div class="stats-label">Total Articles</div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="stats-card">
-          <div class="stats-value" id="totalCategories">0</div>
-          <div class="stats-label">Categories</div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="stats-card">
-          <div class="stats-value" id="latestDate">-</div>
-          <div class="stats-label">Latest Update</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Search & Filter Section -->
-    <div class="search-container">
-      <div class="row">
-        <div class="col-md-6 mb-3 mb-md-0">
-          <label for="searchInput" class="form-label">Search Articles</label>
-          <div class="search-input-group">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" id="searchInput" class="form-control" placeholder="Search by keyword...">
-          </div>
-        </div>
-        <div class="col-md-4 mb-3 mb-md-0">
-          <label for="sortOrder" class="form-label">Sort By</label>
-          <select id="sortOrder" class="form-select">
-            <option value="desc">Newest First</option>
-            <option value="asc">Oldest First</option>
-          </select>
-        </div>
-        <div class="col-md-2">
-          <label for="clearSearch" class="form-label">&nbsp;</label>
-          <button id="clearSearch" class="btn btn-outline-secondary w-100">Clear</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="loading-spinner">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-    </div>
-
-    <!-- News Container -->
-    <div id="newsContainer"></div>
-  </div>
-
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <p class="mb-0">© <span id="currentYear"></span> PIB Health News Dashboard | Data sourced from Press Information Bureau, Government of India</p>
-    </div>
-  </footer>
-
-  <script>
-    let articles = [];
-
-    // Set current year in footer
-    document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-    function groupByCategory(data) {
-      return data.reduce((acc, article) => {
-        const cat = article.category || "Others";
-        if (!acc[cat]) acc[cat] = [];
-        acc[cat].push(article);
-        return acc;
-      }, {});
-    }
-
-    function formatDate(dateStr) {
-      const date = new Date(dateStr);
-      if (isNaN(date)) return dateStr;
-      
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    }
-
-    function getLatestDate(articles) {
-      if (!articles.length) return "-";
-      
-      const dates = articles.map(a => new Date(a.date || a.pubDate || ''))
-                           .filter(d => !isNaN(d));
-      
-      if (!dates.length) return "-";
-      
-      const latest = new Date(Math.max(...dates));
-      return formatDate(latest);
-    }
-
-    function renderArticles() {
-      const container = document.getElementById('newsContainer');
-      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-      const sortOrder = document.getElementById('sortOrder').value;
-
-      let filtered = articles.filter(article =>
-        article.title.toLowerCase().includes(searchQuery) ||
-        (article.content && article.content.toLowerCase().includes(searchQuery))
-      );
-
-      filtered.sort((a, b) => {
-        const dateA = new Date(a.date || a.pubDate || '');
-        const dateB = new Date(b.date || b.pubDate || '');
-        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
-      });
-
-      const grouped = groupByCategory(filtered);
-
-      container.innerHTML = '';
-      
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="alert alert-info text-center" role="alert">
-            No articles found matching your search criteria.
-          </div>
-        `;
-        return;
-      }
-
-      Object.entries(grouped).forEach(([category, items]) => {
-        const section = document.createElement('div');
-        section.className = 'category-section mb-4';
-
-        const header = document.createElement('div');
-        header.className = 'category-header';
-        header.innerHTML = `
-          <span>${category} (${items.length})</span>
-          <i class="fas fa-chevron-down"></i>
-        `;
         
-        // Initially collapsed for categories with many items
-        const isCollapsed = items.length > 5;
-        if (isCollapsed) {
-          header.classList.add('collapsed');
+        <div class="filters">
+            <div class="filter-group">
+                <label for="date-filter">Filter by Date:</label>
+                <select id="date-filter">
+                    <option value="all">All Dates</option>
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="ministry-filter">Filter by Ministry:</label>
+                <select id="ministry-filter">
+                    <option value="all">All Ministries</option>
+                    <!-- Will be populated dynamically -->
+                </select>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="categories" id="categories-container">
+                <div class="loading">Loading categories...</div>
+            </div>
+            
+            <div class="articles" id="articles-container">
+                <div class="loading">Select a category to view articles</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global variables
+        let categorizedData = null;
+        let filteredData = null;
+        let selectedCategory = null;
+        
+        // Fetch data
+        fetch('categorized_data.json')
+            .then(response => response.json())
+            .then(data => {
+                categorizedData = data;
+                filteredData = {...categorizedData};
+                
+                // Initialize the dashboard
+                populateFilters();
+                renderCategories();
+            })
+            .catch(error => {
+                console.error('Error loading data:', error);
+                document.getElementById('categories-container').innerHTML = '<div class="error">Error loading data. Please try again later.</div>';
+            });
+        
+        // Populate filter dropdowns
+        function populateFilters() {
+            // Get unique dates
+            const dates = new Set();
+            const ministries = new Set();
+            
+            Object.keys(categorizedData).forEach(category => {
+                categorizedData[category].forEach(article => {
+                    if (article.date) dates.add(article.date);
+                    if (article.ministry) ministries.add(article.ministry);
+                });
+            });
+            
+            // Populate date filter
+            const dateFilter = document.getElementById('date-filter');
+            Array.from(dates).sort().reverse().forEach(date => {
+                const option = document.createElement('option');
+                option.value = date;
+                option.textContent = date;
+                dateFilter.appendChild(option);
+            });
+            
+            // Populate ministry filter
+            const ministryFilter = document.getElementById('ministry-filter');
+            Array.from(ministries).sort().forEach(ministry => {
+                const option = document.createElement('option');
+                option.value = ministry;
+                option.textContent = ministry;
+                ministryFilter.appendChild(option);
+            });
+            
+            // Add event listeners
+            dateFilter.addEventListener('change', applyFilters);
+            ministryFilter.addEventListener('change', applyFilters);
         }
         
-        header.addEventListener('click', () => {
-          const content = section.querySelector('.articles');
-          header.classList.toggle('collapsed');
-          content.style.display = content.style.display === 'none' ? 'block' : 'none';
-        });
-
-        const articleList = document.createElement('div');
-        articleList.className = 'articles mt-3';
-        if (isCollapsed) {
-          articleList.style.display = 'none';
+        // Apply filters
+        function applyFilters() {
+            const dateFilter = document.getElementById('date-filter').value;
+            const ministryFilter = document.getElementById('ministry-filter').value;
+            
+            filteredData = {};
+            
+            Object.keys(categorizedData).forEach(category => {
+                const filteredArticles = categorizedData[category].filter(article => {
+                    const dateMatch = dateFilter === 'all' || article.date === dateFilter;
+                    const ministryMatch = ministryFilter === 'all' || article.ministry === ministryFilter;
+                    return dateMatch && ministryMatch;
+                });
+                
+                if (filteredArticles.length > 0) {
+                    filteredData[category] = filteredArticles;
+                }
+            });
+            
+            renderCategories();
+            
+            // If we had a selected category, try to reselect it
+            if (selectedCategory && filteredData[selectedCategory]) {
+                selectCategory(selectedCategory);
+            } else {
+                // Otherwise clear the articles
+                document.getElementById('articles-container').innerHTML = '<div class="no-articles">Select a category to view articles</div>';
+                selectedCategory = null;
+            }
         }
-
-        items.forEach(article => {
-          const el = document.createElement('div');
-          el.className = 'article';
-          
-          // Extract excerpt (first 200 chars)
-          const excerpt = article.content 
-            ? article.content.slice(0, 200) + (article.content.length > 200 ? '...' : '') 
-            : '';
-          
-          el.innerHTML = `
-            <div class="article-title">
-              <a href="${article.link}" target="_blank">${article.title}</a>
-            </div>
-            <div class="article-date">
-              <i class="far fa-calendar-alt"></i>
-              ${formatDate(article.date || article.pubDate || '')}
-            </div>
-            <div class="article-content">${excerpt}</div>
-            <div class="text-end mt-2">
-              <a href="${article.link}" target="_blank" class="btn btn-sm btn-outline-primary">
-                Read More <i class="fas fa-external-link-alt ms-1"></i>
-              </a>
-            </div>
-          `;
-          articleList.appendChild(el);
-        });
-
-        section.appendChild(header);
-        section.appendChild(articleList);
-        container.appendChild(section);
-      });
-      
-      // Update stats
-      document.getElementById('totalArticles').textContent = articles.length;
-      document.getElementById('totalCategories').textContent = Object.keys(grouped).length;
-      document.getElementById('latestDate').textContent = getLatestDate(articles);
-    }
-
-    // Event listeners
-    document.getElementById('searchInput').addEventListener('input', renderArticles);
-    document.getElementById('sortOrder').addEventListener('change', renderArticles);
-    document.getElementById('clearSearch').addEventListener('click', () => {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('sortOrder').value = 'desc';
-      renderArticles();
-    });
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-      loadData();
-    });
-
-    function loadData() {
-      // Show loading spinner
-      document.getElementById('loadingSpinner').style.display = 'flex';
-      document.getElementById('newsContainer').innerHTML = '';
-      
-      fetch('data/categorized_data.json')
-        .then(response => response.json())
-        .then(data => {
-          articles = data;
-          // Hide loading spinner
-          document.getElementById('loadingSpinner').style.display = 'none';
-          renderArticles();
-        })
-        .catch(error => {
-          console.error('Error loading data:', error);
-          document.getElementById('loadingSpinner').style.display = 'none';
-          document.getElementById('newsContainer').innerHTML = `
-            <div class="alert alert-danger" role="alert">
-              Error loading data. Please try refreshing the page.
-            </div>
-          `;
-        });
-    }
-
-    // Initial load
-    loadData();
-  </script>
+        
+        // Render categories
+        function renderCategories() {
+            const categoriesContainer = document.getElementById('categories-container');
+            categoriesContainer.innerHTML = '';
+            
+            if (Object.keys(filteredData).length === 0) {
+                categoriesContainer.innerHTML = '<div class="no-articles">No categories match the current filters</div>';
+                return;
+            }
+            
+            Object.keys(filteredData).sort().forEach(category => {
+                const categoryElement = document.createElement('div');
+                categoryElement.className = 'category';
+                categoryElement.innerHTML = `
+                    ${category}
+                    <span class="category-count">${filteredData[category].length}</span>
+                `;
+                
+                categoryElement.addEventListener('click', () => selectCategory(category));
+                
+                if (category === selectedCategory) {
+                    categoryElement.classList.add('active');
+                }
+                
+                categoriesContainer.appendChild(categoryElement);
+            });
+        }
+        
+        // Select category
+        function selectCategory(category) {
+            selectedCategory = category;
+            
+            // Update category styling
+            document.querySelectorAll('.category').forEach(el => {
+                el.classList.remove('active');
+                if (el.textContent.trim().startsWith(category)) {
+                    el.classList.add('active');
+                }
+            });
+            
+            // Render articles
+            renderArticles(category);
+        }
+        
+        // Render articles
+        function renderArticles(category) {
+            const articlesContainer = document.getElementById('articles-container');
+            articlesContainer.innerHTML = '';
+            
+            if (!filteredData[category] || filteredData[category].length === 0) {
+                articlesContainer.innerHTML = '<div class="no-articles">No articles in this category match the current filters</div>';
+                return;
+            }
+            
+            filteredData[category].forEach(article => {
+                const articleElement = document.createElement('div');
+                articleElement.className = 'article';
+                
+                let articleContent = `
+                    <h3>${article.title || 'Untitled'}</h3>
+                    <div class="article-meta">
+                        ${article.date ? `<span>Date: ${article.date}</span>` : ''}
+                        ${article.ministry ? `<span> | Ministry: ${article.ministry}</span>` : ''}
+                    </div>
+                `;
+                
+                // Add summary section if available
+                if (article.summary) {
+                    articleContent += `
+                        <div class="article-summary">
+                            <strong>Summary:</strong> ${article.summary}
+                        </div>
+                    `;
+                }
+                
+                // Add link if available
+                if (article.url) {
+                    articleContent += `<a href="${article.url}" target="_blank" class="article-link">Read full article</a>`;
+                }
+                
+                articleElement.innerHTML = articleContent;
+                articlesContainer.appendChild(articleElement);
+            });
+        }
+    </script>
 </body>
 </html>
