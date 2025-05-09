@@ -1,388 +1,453 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PIB Health News Dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f5;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .header {
-      background-color: #4CAF50;
-      color: white;
-      text-align: center;
-      padding: 20px 0;
-      border-radius: 5px 5px 0 0;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .news-card {
-      background-color: white;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      transition: transform 0.3s ease;
-    }
-
-    .news-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-header {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px;
-      font-weight: bold;
-    }
-
-    .card-body {
-      padding: 15px;
-    }
-
-    .card-title {
-      font-size: 18px;
-      margin-bottom: 10px;
-      color: #333;
-    }
-
-    .card-summary {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 10px;
-      padding: 10px;
-      background-color: #f9f9f9;
-      border-left: 3px solid #4CAF50;
-      font-style: italic;
-    }
-
-    .card-meta {
-      font-size: 12px;
-      color: #888;
-      margin-bottom: 10px;
-    }
-
-    .card-actions {
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .btn {
-      padding: 8px 15px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      text-decoration: none;
-      font-size: 14px;
-      display: inline-block;
-    }
-
-    .btn:hover {
-      background-color: #45a049;
-    }
-
-    .loader {
-      text-align: center;
-      padding: 20px;
-      font-size: 20px;
-    }
-
-    .refresh-btn {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 5px;
-      margin-top: 20px;
-      display: block;
-      margin: 20px auto;
-    }
-
-    .refresh-btn:hover {
-      background-color: #45a049;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 30px;
-      padding: 20px;
-      color: #888;
-      font-size: 14px;
-    }
-
-    .search-container {
-      margin: 20px 0;
-      display: flex;
-      justify-content: center;
-    }
-
-    .search-box {
-      padding: 10px;
-      width: 300px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-
-    .filter-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .filter-btn {
-      background-color: #f1f1f1;
-      color: #333;
-      border: none;
-      padding: 8px 15px;
-      margin: 5px;
-      cursor: pointer;
-      border-radius: 20px;
-      font-size: 14px;
-    }
-
-    .filter-btn.active {
-      background-color: #4CAF50;
-      color: white;
-    }
-
-    @media (max-width: 768px) {
-      .dashboard {
-        grid-template-columns: 1fr;
-      }
-
-      .search-box {
-        width: 100%;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ministry of Health and Family Welfare Updates Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            background-color: #1a237e;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: white !important;
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+        }
+        .nav-link:hover {
+            color: white !important;
+        }
+        .card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #1a237e;
+            color: white;
+            font-weight: bold;
+            padding: 12px 20px;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .category-summary {
+            margin-bottom: 15px;
+            color: #555;
+            font-style: italic;
+        }
+        .news-count {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+        .btn-primary {
+            background-color: #1a237e;
+            border-color: #1a237e;
+        }
+        .btn-primary:hover {
+            background-color: #0d1b69;
+            border-color: #0d1b69;
+        }
+        .footer {
+            background-color: #1a237e;
+            color: white;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+        .footer a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+        }
+        .footer a:hover {
+            color: white;
+        }
+        #lastUpdated {
+            font-style: italic;
+            color: #6c757d;
+        }
+    </style>
 </head>
-
 <body>
-  <div class="container">
-    <div class="header">
-      <h1><i class="fas fa-heartbeat"></i> PIB Health News Dashboard</h1>
-      <p>Stay updated with the latest health news from Press Information Bureau</p>
-    </div>
-
-    <div class="search-container">
-      <input type="text" class="search-box" id="searchBox" placeholder="Search news...">
-    </div>
-
-    <div class="filter-container" id="filterContainer">
-      <button class="filter-btn active" data-category="all">All</button>
-      <button class="filter-btn" data-category="Ministry of Health and Family Welfare">Health Ministry</button>
-      <button class="filter-btn" data-category="Ministry of AYUSH">AYUSH</button>
-      <button class="filter-btn" data-category="Ministry of Chemicals and Fertilizers">Chemicals & Pharma</button>
-    </div>
-
-    <div class="dashboard" id="newsDashboard">
-      <div class="loader">
-        <i class="fas fa-spinner fa-spin"></i> Loading news...
-      </div>
-    </div>
-
-    <button class="refresh-btn" id="refreshBtn">
-      <i class="fas fa-sync-alt"></i> Refresh News
-    </button>
-
-    <div class="footer">
-      <p>© 2023-2025 PIB Health News Dashboard | Data sourced from Press Information Bureau</p>
-    </div>
-  </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Get the necessary DOM elements
-      const dashboard = document.getElementById('newsDashboard');
-      const searchBox = document.getElementById('searchBox');
-      const refreshBtn = document.getElementById('refreshBtn');
-      const filterContainer = document.getElementById('filterContainer');
-      
-      // Hardcoded news data with pre-generated summaries
-      const newsData = [
-        {
-          title: "Dr. Mansukh Mandaviya Inaugurates Global Ayush Investment and Innovation Summit 2023",
-          link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1925650",
-          ministry: "Ministry of AYUSH",
-          date: "May 03, 2023",
-          summary: "Union Minister for Health and Family Welfare and Chemicals & Fertilizers, Dr. Mansukh Mandaviya inaugurated the Global Ayush Investment and Innovation Summit (GAIIS) 2023. The summit focuses on attracting investments in traditional medicine systems and promoting innovation in the AYUSH sector."
-        },
-        {
-          title: "WHO and India Establish Global Centre for Traditional Medicine",
-          link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1922150",
-          ministry: "Ministry of AYUSH",
-          date: "April 25, 2023",
-          summary: "World Health Organization (WHO) and the Government of India signed an agreement to establish the WHO Global Centre for Traditional Medicine. This global knowledge centre, supported by an investment of USD 250 million from India, aims to harness the potential of traditional medicine through modern science and technology."
-        },
-        {
-          title: "Union Health Minister launches multiple health initiatives at National Workshop on PM-ABHIM",
-          link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1920001",
-          ministry: "Ministry of Health and Family Welfare",
-          date: "April 18, 2023",
-          summary: "Dr. Mansukh Mandaviya launched multiple health initiatives at the National Workshop on Prime Minister – Ayushman Bharat Health Infrastructure Mission (PM-ABHIM). These initiatives focus on strengthening healthcare infrastructure and improving access to quality healthcare services across the country."
-        },
-        {
-          title: "Government Approves 22 New AIIMS across the country",
-          link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1918450",
-          ministry: "Ministry of Health and Family Welfare",
-          date: "April 12, 2023",
-          summary: "The Union Cabinet has approved the setting up of 22 new All India Institutes of Medical Sciences (AIIMS) across various states. This expansion aims to reduce the burden on existing healthcare facilities and provide advanced medical education to address the shortage of healthcare professionals."
-        },
-        {
-          title: "National Pharmaceutical Pricing Authority fixes ceiling prices of essential medicines",
-          link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1916222",
-          ministry: "Ministry of Chemicals and Fertilizers",
-          date: "April 5, 2023",
-          summary: "The National Pharmaceutical Pricing Authority (NPPA) has fixed ceiling prices for several essential medicines under the Drug Price Control Order. This move aims to ensure affordability and accessibility of crucial medications for all citizens, particularly benefiting lower income populations."
-        },
-        {
-          title: "Ayushman Bharat Digital Mission Reaches 10 Million Digital Health Records",
-          link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1914100",
-          ministry: "Ministry of Health and Family Welfare",
-          date: "March 28, 2023",
-          summary: "Ayushman Bharat Digital Mission (ABDM) has successfully created over 10 million digital health records nationwide. This milestone demonstrates the rapid adoption of digital healthcare solutions in India, enhancing accessible and affordable quality healthcare for citizens."
-        },
-        {
-          title: "India's Pharmaceutical Exports Cross $25 Billion",
-          link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1912345",
-          ministry: "Ministry of Chemicals and Fertilizers",
-          date: "March 20, 2023",
-          summary: "India's pharmaceutical exports have surpassed $25 billion for the first time, marking a significant milestone for the sector. The growth has been attributed to increased global demand for Indian generic medicines, vaccines, and APIs, affirming India's position as the 'Pharmacy of the World'."
-        },
-        {
-          title: "National Medical Commission Issues New Guidelines for MBBS Education",
-          link: "https://pib.gov.in/PressReleasePage.aspx?PRID=1910230",
-          ministry: "Ministry of Health and Family Welfare",
-          date: "March 15, 2023",
-          summary: "The National Medical Commission (NMC) has issued new guidelines for MBBS education emphasizing early clinical exposure, integrated teaching, and skill development. These curriculum changes aim to create competent medical professionals better equipped to address contemporary healthcare challenges."
-        }
-      ];
-
-      // Function to display news cards
-      function displayNews(news) {
-        // Clear the dashboard
-        dashboard.innerHTML = '';
-        
-        if (!news || news.length === 0) {
-          dashboard.innerHTML = '<div class="loader">No news available at the moment.</div>';
-          return;
-        }
-
-        // Create a card for each news item
-        news.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'news-card';
-          card.dataset.category = item.ministry;
-
-          card.innerHTML = `
-            <div class="card-header">${item.ministry || 'Unknown Ministry'}</div>
-            <div class="card-body">
-              <h3 class="card-title">${item.title || 'No Title'}</h3>
-              <div class="card-summary">${item.summary || 'No summary available.'}</div>
-              <div class="card-meta">
-                <i class="far fa-calendar-alt"></i> ${item.date || 'Unknown Date'}
-              </div>
-              <div class="card-actions">
-                <a href="${item.link}" class="btn" target="_blank">
-                  <i class="fas fa-external-link-alt"></i> Read More
-                </a>
-              </div>
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">MoHFW Updates Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-info-circle"></i> About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Contact</a>
+                    </li>
+                </ul>
             </div>
-          `;
+        </div>
+    </nav>
 
-          dashboard.appendChild(card);
-        });
-      }
+    <div class="container mb-4">
+        <div class="row">
+            <div class="col-md-8">
+                <h1>Ministry of Health and Family Welfare Updates</h1>
+                <p class="lead">A curated dashboard of official updates from the Ministry of Health and Family Welfare, Government of India.</p>
+                <p id="lastUpdated">Last data refresh: <span id="updateTime"></span></p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary" onclick="refreshData()"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+            </div>
+        </div>
+    </div>
 
-      // Function to filter news by search term
-      function filterBySearch(searchTerm) {
-        searchTerm = searchTerm.toLowerCase();
-        return newsData.filter(item => {
-          return (
-            (item.title && item.title.toLowerCase().includes(searchTerm)) ||
-            (item.summary && item.summary.toLowerCase().includes(searchTerm)) ||
-            (item.ministry && item.ministry.toLowerCase().includes(searchTerm))
-          );
-        });
-      }
+    <div class="container">
+        <div class="row g-4">
+            <!-- Healthcare Initiatives -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        Healthcare Initiatives
+                    </div>
+                    <div class="card-body">
+                        <div class="category-summary">
+                            Recent initiatives focused on expanding healthcare accessibility, strengthening primary care services, and implementing new health programs to improve public health outcomes across India.
+                        </div>
+                        <div class="news-count">
+                            <span id="healthcareCount">0</span> recent updates
+                        </div>
+                        <div id="healthcareNews" class="news-list">
+                            <!-- News items will be added here -->
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="viewAllNews('healthcare')">View All</button>
+                    </div>
+                </div>
+            </div>
 
-      // Function to filter news by category
-      function filterByCategory(category) {
-        const cards = document.querySelectorAll('.news-card');
-        
-        cards.forEach(card => {
-          if (category === 'all' || card.dataset.category === category) {
-            card.style.display = 'block';
-          } else {
-            card.style.display = 'none';
-          }
-        });
-      }
+            <!-- Disease Control -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        Disease Control
+                    </div>
+                    <div class="card-body">
+                        <div class="category-summary">
+                            Proactive measures and strategies implemented by the ministry to prevent, monitor, and control communicable and non-communicable diseases, including vaccination campaigns and outbreak responses.
+                        </div>
+                        <div class="news-count">
+                            <span id="diseaseCount">0</span> recent updates
+                        </div>
+                        <div id="diseaseNews" class="news-list">
+                            <!-- News items will be added here -->
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="viewAllNews('disease')">View All</button>
+                    </div>
+                </div>
+            </div>
 
-      // Search box event listener
-      searchBox.addEventListener('input', function() {
-        const searchTerm = this.value;
-        const filteredNews = filterBySearch(searchTerm);
-        displayNews(filteredNews);
-        
-        // Re-apply active category filter
-        const activeFilter = document.querySelector('.filter-btn.active');
-        if (activeFilter && activeFilter.dataset.category !== 'all') {
-          filterByCategory(activeFilter.dataset.category);
+            <!-- Health Policy -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        Health Policy
+                    </div>
+                    <div class="card-body">
+                        <div class="category-summary">
+                            New policies, regulations, and governance frameworks introduced to strengthen India's healthcare system, including updates on the National Health Policy and regulatory reforms.
+                        </div>
+                        <div class="news-count">
+                            <span id="policyCount">0</span> recent updates
+                        </div>
+                        <div id="policyNews" class="news-list">
+                            <!-- News items will be added here -->
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="viewAllNews('policy')">View All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Education -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        Medical Education
+                    </div>
+                    <div class="card-body">
+                        <div class="category-summary">
+                            Updates on medical education reforms, new medical colleges, curriculum changes, and initiatives to enhance the quality and reach of healthcare professional training across the country.
+                        </div>
+                        <div class="news-count">
+                            <span id="educationCount">0</span> recent updates
+                        </div>
+                        <div id="educationNews" class="news-list">
+                            <!-- News items will be added here -->
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="viewAllNews('education')">View All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Public Health Campaigns -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        Public Health Campaigns
+                    </div>
+                    <div class="card-body">
+                        <div class="category-summary">
+                            Awareness initiatives and public health campaigns launched to educate citizens about preventive healthcare, healthy lifestyles, and important public health issues.
+                        </div>
+                        <div class="news-count">
+                            <span id="campaignsCount">0</span> recent updates
+                        </div>
+                        <div id="campaignsNews" class="news-list">
+                            <!-- News items will be added here -->
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="viewAllNews('campaigns')">View All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Infrastructure -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        Health Infrastructure
+                    </div>
+                    <div class="card-body">
+                        <div class="category-summary">
+                            Development of healthcare facilities, hospitals, diagnostic centers, and medical technology infrastructure to strengthen the nation's healthcare delivery system.
+                        </div>
+                        <div class="news-count">
+                            <span id="infrastructureCount">0</span> recent updates
+                        </div>
+                        <div id="infrastructureNews" class="news-list">
+                            <!-- News items will be added here -->
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="viewAllNews('infrastructure')">View All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maternal & Child Health -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        Maternal & Child Health
+                    </div>
+                    <div class="card-body">
+                        <div class="category-summary">
+                            Programs and initiatives focused on improving maternal health, reducing infant mortality, enhancing nutrition, and ensuring healthy development of children.
+                        </div>
+                        <div class="news-count">
+                            <span id="maternalCount">0</span> recent updates
+                        </div>
+                        <div id="maternalNews" class="news-list">
+                            <!-- News items will be added here -->
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="viewAllNews('maternal')">View All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mental Health -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        Mental Health
+                    </div>
+                    <div class="card-body">
+                        <div class="category-summary">
+                            Initiatives addressing mental health challenges, including awareness programs, treatment facilities, and policy reforms aimed at destigmatizing mental health issues.
+                        </div>
+                        <div class="news-count">
+                            <span id="mentalCount">0</span> recent updates
+                        </div>
+                        <div id="mentalNews" class="news-list">
+                            <!-- News items will be added here -->
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="viewAllNews('mental')">View All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Digital Health -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        Digital Health
+                    </div>
+                    <div class="card-body">
+                        <div class="category-summary">
+                            Technological advancements in healthcare delivery, including telehealth services, electronic health records, health apps, and digital platforms to improve healthcare accessibility.
+                        </div>
+                        <div class="news-count">
+                            <span id="digitalCount">0</span> recent updates
+                        </div>
+                        <div id="digitalNews" class="news-list">
+                            <!-- News items will be added here -->
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="viewAllNews('digital')">View All</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Ministry of Health & Family Welfare Dashboard</h5>
+                    <p>This dashboard provides the latest updates and news from the Ministry of Health and Family Welfare, Government of India.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Official Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="https://www.mohfw.gov.in/" target="_blank">MoHFW Official Website</a></li>
+                        <li><a href="https://pib.gov.in/" target="_blank">Press Information Bureau</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-4" style="background-color: rgba(255, 255, 255, 0.1);">
+            <div class="text-center">
+                <p>&copy; 2025 Ministry of Health and Family Welfare Updates Dashboard</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Map of category display names to their IDs in the data
+        const categoryMap = {
+            'healthcare': 'Healthcare Initiatives',
+            'disease': 'Disease Control',
+            'policy': 'Health Policy',
+            'education': 'Medical Education',
+            'campaigns': 'Public Health Campaigns',
+            'infrastructure': 'Health Infrastructure',
+            'maternal': 'Maternal & Child Health',
+            'mental': 'Mental Health',
+            'digital': 'Digital Health'
+        };
+
+        // Function to filter data for Ministry of Health and Family Welfare only
+        function filterHealthMinistryData(data) {
+            return data.filter(item => 
+                item.ministry && 
+                item.ministry.toLowerCase().includes('health') && 
+                item.ministry.toLowerCase().includes('family welfare')
+            );
         }
-      });
 
-      // Refresh button event listener
-      refreshBtn.addEventListener('click', function() {
-        // In a real app, this would fetch fresh data
-        // For now, just redisplay the current data
-        displayNews(newsData);
-      });
-
-      // Filter buttons event listener
-      filterContainer.addEventListener('click', function(e) {
-        if (e.target.classList.contains('filter-btn')) {
-          // Update active button
-          document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.remove('active');
-          });
-          e.target.classList.add('active');
-          
-          // Apply the filter
-          filterByCategory(e.target.dataset.category);
+        // Load news data
+        async function loadNewsData() {
+            try {
+                const response = await fetch('data/categorized_data.json');
+                const data = await response.json();
+                
+                // Filter for Ministry of Health and Family Welfare only
+                const healthMinistryData = filterHealthMinistryData(data);
+                
+                populateDashboard(healthMinistryData);
+                document.getElementById('updateTime').textContent = new Date().toLocaleString();
+            } catch (error) {
+                console.error('Error loading news data:', error);
+                alert('Failed to load news data. Please try again later.');
+            }
         }
-      });
 
-      // Initial display of news
-      displayNews(newsData);
-    });
-  </script>
+        // Populate the dashboard with news items
+        function populateDashboard(data) {
+            // Clear existing content
+            for (const category in categoryMap) {
+                document.getElementById(`${category}News`).innerHTML = '';
+                document.getElementById(`${category}Count`).textContent = '0';
+            }
+
+            // Group data by category
+            const categorizedData = {};
+            for (const category in categoryMap) {
+                categorizedData[category] = [];
+            }
+
+            // Categorize data
+            data.forEach(item => {
+                for (const [categoryId, categoryName] of Object.entries(categoryMap)) {
+                    if (item.category === categoryName) {
+                        categorizedData[categoryId].push(item);
+                        break;
+                    }
+                }
+            });
+
+            // Populate each category section
+            for (const [categoryId, items] of Object.entries(categorizedData)) {
+                const container = document.getElementById(`${categoryId}News`);
+                const countElement = document.getElementById(`${categoryId}Count`);
+                
+                // Update count
+                countElement.textContent = items.length;
+                
+                // Display up to 3 most recent items
+                items.slice(0, 3).forEach(item => {
+                    const newsItem = document.createElement('div');
+                    newsItem.className = 'news-item mb-3';
+                    
+                    const date = new Date(item.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                    
+                    newsItem.innerHTML = `
+                        <h6><a href="${item.link}" target="_blank">${item.title}</a></h6>
+                        <p class="small text-muted">${date}</p>
+                    `;
+                    
+                    container.appendChild(newsItem);
+                });
+            }
+        }
+
+        // View all news in a category
+        function viewAllNews(category) {
+            // This would typically navigate to a detailed view page
+            alert(`Viewing all ${categoryMap[category]} news`);
+            // Alternatively, you could implement a modal that shows all news items in this category
+        }
+
+        // Refresh data
+        function refreshData() {
+            loadNewsData();
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadNewsData);
+    </script>
 </body>
-
 </html>
