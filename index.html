@@ -3,679 +3,327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ministry of Health and Family Welfare Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <title>Ministry of Health and Family Welfare Updates</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
             background-color: #f8f9fa;
-            color: #333;
         }
-        .container {
-            width: 95%;
-            margin: 0 auto;
-            padding: 20px;
+        .navbar {
+            background-color: #1a237e;
         }
-        header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+        .navbar-brand {
+            font-weight: bold;
+            color: white !important;
         }
-        h1 {
-            margin: 0;
-            font-size: 2.2rem;
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
         }
-        .subtitle {
-            font-size: 1.2rem;
-            font-weight: 300;
-            margin-top: 5px;
-        }
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+        .nav-link:hover {
+            color: white !important;
         }
         .card {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            margin-bottom: 20px;
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
-        .card h2 {
-            color: #007bff;
-            margin-top: 0;
-            font-size: 1.5rem;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        .stat-card {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-        }
-        .stat-card h3 {
-            margin-top: 0;
-            font-size: 1.1rem;
-            color: #555;
-        }
-        .stat-card .number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #28a745;
-            margin: 10px 0;
-        }
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-bottom: 20px;
-        }
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .data-table th, .data-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .data-table th {
-            background-color: #f8f9fa;
-            color: #555;
-            font-weight: 600;
-        }
-        .data-table tr:hover {
-            background-color: #f1f1f1;
-        }
-        .category-title {
-            font-size: 1.8rem;
-            color: #343a40;
-            margin-top: 40px;
-            margin-bottom: 20px;
-            border-left: 5px solid #007bff;
-            padding-left: 15px;
-        }
-        .summary-box {
-            background-color: #e9f7ef;
-            border-left: 5px solid #28a745;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .summary-box h3 {
-            margin-top: 0;
-            color: #28a745;
-        }
-        .alert-box {
-            background-color: #ffebee;
-            border-left: 5px solid #f44336;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .alert-box h3 {
-            margin-top: 0;
-            color: #f44336;
-        }
-        .info-box {
-            background-color: #e3f2fd;
-            border-left: 5px solid #2196f3;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        .info-box h3 {
-            margin-top: 0;
-            color: #2196f3;
-        }
-        .funding-progress {
-            height: 20px;
-            background-color: #e9ecef;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%;
-            background-color: #28a745;
-            text-align: center;
+        .card-header {
+            background-color: #1a237e;
             color: white;
-            line-height: 20px;
-            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 12px 20px;
         }
-        .key-indicator {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-        .indicator-label {
-            flex: 2;
-            font-weight: 500;
-        }
-        .indicator-value {
-            flex: 1;
-            text-align: right;
-            font-weight: 700;
-            color: #007bff;
-        }
-        .trend-up {
-            color: #28a745;
-        }
-        .trend-down {
-            color: #dc3545;
-        }
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 20px;
-        }
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border: 1px solid transparent;
-            border-bottom: none;
-        }
-        .tab.active {
-            background-color: white;
-            border-color: #ddd;
-            border-radius: 5px 5px 0 0;
-            margin-bottom: -1px;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .notification-badge {
-            display: inline-block;
-            background-color: #dc3545;
-            color: white;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            text-align: center;
-            line-height: 22px;
-            font-size: 0.8rem;
-            margin-left: 5px;
-        }
-        .date-display {
-            text-align: right;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        footer {
-            background-color: #343a40;
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 50px;
-        }
-        .loading {
-            display: none;
-            text-align: center;
+        .card-body {
             padding: 20px;
         }
-        .loading:after {
-            content: '...';
-            animation: dots 1.5s steps(5, end) infinite;
+        .news-count {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 15px;
         }
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60% { content: '...'; }
-            80%, 100% { content: ''; }
+        .news-item {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
         }
-        @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            h1 {
-                font-size: 1.8rem;
-            }
-            .category-title {
-                font-size: 1.5rem;
-            }
+        .news-item:last-child {
+            border-bottom: none;
+        }
+        .btn-primary {
+            background-color: #1a237e;
+            border-color: #1a237e;
+        }
+        .btn-primary:hover {
+            background-color: #0d1b69;
+            border-color: #0d1b69;
+        }
+        .footer {
+            background-color: #1a237e;
+            color: white;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+        .footer a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+        }
+        .footer a:hover {
+            color: white;
+        }
+        #lastUpdated {
+            font-style: italic;
+            color: #6c757d;
+        }
+        .news-summary {
+            color: #555;
+            margin: 8px 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .read-more {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1a237e;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .read-more:hover {
+            text-decoration: underline;
+        }
+        .news-date {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        #categoryFilter {
+            max-width: 300px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <header>
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
         <div class="container">
-            <h1>Ministry of Health and Family Welfare</h1>
-            <div class="subtitle">Dashboard for Health Metrics and Programs</div>
-        </div>
-    </header>
-
-    <div class="container">
-        <div class="date-display">
-            Last Updated: <span id="last-updated">Loading...</span>
-        </div>
-
-        <div class="dashboard-grid">
-            <div class="card">
-                <h2>Key Health Indicators</h2>
-                <div id="keyIndicators"></div>
-            </div>
-            
-            <div class="card">
-                <h2>Health Programs Overview</h2>
-                <div id="healthPrograms"></div>
-            </div>
-            
-            <div class="card">
-                <h2>Healthcare Access</h2>
-                <div id="healthcareAccess"></div>
+            <a class="navbar-brand" href="#">MoHFW Updates</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-info-circle"></i> About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Contact</a>
+                    </li>
+                </ul>
             </div>
         </div>
+    </nav>
 
-        <h2 class="category-title">Disease Surveillance</h2>
-        <div class="dashboard-grid">
-            <div class="card">
-                <h2>Disease Prevalence</h2>
-                <div class="chart-container">
-                    <canvas id="diseaseChart"></canvas>
-                </div>
+    <div class="container mb-4">
+        <div class="row">
+            <div class="col-md-8">
+                <h1>Ministry of Health and Family Welfare Updates</h1>
+                <p class="lead">A curated dashboard of official updates from the Ministry of Health and Family Welfare, Government of India.</p>
+                <p id="lastUpdated">Last data refresh: <span id="updateTime"></span></p>
             </div>
-            
-            <div class="card">
-                <h2>Outbreak Alerts</h2>
-                <div id="outbreakAlerts"></div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-primary" onclick="refreshData()"><i class="fas fa-sync-alt"></i> Refresh Data</button>
             </div>
         </div>
-
-        <h2 class="category-title">Healthcare Infrastructure</h2>
-        <div class="dashboard-grid">
-            <div class="card">
-                <h2>Healthcare Facilities</h2>
-                <div id="healthcareFacilities"></div>
-                <div class="chart-container">
-                    <canvas id="facilitiesChart"></canvas>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2>Healthcare Workforce</h2>
-                <div id="healthcareWorkforce"></div>
-            </div>
-        </div>
-
-        <h2 class="category-title">Health Funding</h2>
-        <div class="dashboard-grid">
-            <div class="card">
-                <h2>Budget Allocation</h2>
-                <div class="chart-container">
-                    <canvas id="budgetChart"></canvas>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h2>Program Funding</h2>
-                <div id="programFunding"></div>
-            </div>
-        </div>
-
-        <h2 class="category-title">Public Health Campaigns</h2>
-        <div class="dashboard-grid">
-            <div class="card">
-                <h2>Active Campaigns</h2>
-                <div id="activeCampaigns"></div>
+        
+        <div class="row mt-4 mb-4">
+            <div class="col-md-4">
+                <label for="categoryFilter" class="form-label">Filter by Category:</label>
+                <select class="form-select" id="categoryFilter" onchange="filterByCategory()">
+                    <option value="all">All Categories</option>
+                    <!-- Categories will be populated dynamically -->
+                </select>
             </div>
         </div>
     </div>
 
-    <footer>
+    <div class="container">
+        <div id="newsContainer" class="row">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i> Loading updates...
+            </div>
+            <!-- News items will be added here dynamically -->
+        </div>
+    </div>
+
+    <footer class="footer mt-5">
         <div class="container">
-            <p>&copy; 2025 Ministry of Health and Family Welfare. All rights reserved.</p>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Ministry of Health & Family Welfare Dashboard</h5>
+                    <p>This dashboard provides the latest updates and news from the Ministry of Health and Family Welfare, Government of India.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Official Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="https://www.mohfw.gov.in/" target="_blank">MoHFW Official Website</a></li>
+                        <li><a href="https://pib.gov.in/" target="_blank">Press Information Bureau</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-4" style="background-color: rgba(255, 255, 255, 0.1);">
+            <div class="text-center">
+                <p>&copy; 2025 Ministry of Health and Family Welfare Updates Dashboard</p>
+            </div>
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Load data from JSON file
-        async function loadData() {
+        // Global variables
+        let newsData = [];
+        let currentFilter = 'all';
+        
+        // Load news data from categorized_data.json
+        async function loadNewsData() {
             try {
+                // Show loading indicator
+                document.getElementById('newsContainer').innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading updates...</div>';
+                
+                // Fetch the JSON data
                 const response = await fetch('categorized_data.json');
-                const data = await response.json();
-                populateDashboard(data);
-            } catch (error) {
-                console.error('Error loading data:', error);
-                alert('Failed to load dashboard data. Please try again later.');
-            }
-        }
-
-        // Populate dashboard with data
-        function populateDashboard(data) {
-            // Update last updated date
-            document.getElementById('last-updated').textContent = new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-
-            // Populate Key Health Indicators
-            if (data.keyHealthIndicators) {
-                const keyIndicatorsEl = document.getElementById('keyIndicators');
-                keyIndicatorsEl.innerHTML = '';
-                
-                data.keyHealthIndicators.forEach(indicator => {
-                    const trend = indicator.trend === 'up' ? '↑' : indicator.trend === 'down' ? '↓' : '→';
-                    const trendClass = indicator.trend === 'up' ? 'trend-up' : indicator.trend === 'down' ? 'trend-down' : '';
-                    
-                    const indicatorEl = document.createElement('div');
-                    indicatorEl.className = 'key-indicator';
-                    indicatorEl.innerHTML = `
-                        <div class="indicator-label">${indicator.name}</div>
-                        <div class="indicator-value">${indicator.value} <span class="${trendClass}">${trend}</span></div>
-                    `;
-                    keyIndicatorsEl.appendChild(indicatorEl);
-                });
-            }
-
-            // Populate Health Programs
-            if (data.healthPrograms) {
-                const healthProgramsEl = document.getElementById('healthPrograms');
-                healthProgramsEl.innerHTML = '';
-                
-                data.healthPrograms.forEach(program => {
-                    const programEl = document.createElement('div');
-                    programEl.className = 'info-box';
-                    programEl.innerHTML = `
-                        <h3>${program.name}</h3>
-                        <p>${program.description}</p>
-                        <div><strong>Status:</strong> ${program.status}</div>
-                        <div><strong>Beneficiaries:</strong> ${program.beneficiaries}</div>
-                    `;
-                    healthProgramsEl.appendChild(programEl);
-                });
-            }
-
-            // Populate Healthcare Access
-            if (data.healthcareAccess) {
-                const healthcareAccessEl = document.getElementById('healthcareAccess');
-                healthcareAccessEl.innerHTML = '';
-                
-                const access = data.healthcareAccess;
-                for (const [key, value] of Object.entries(access)) {
-                    const accessEl = document.createElement('div');
-                    accessEl.className = 'key-indicator';
-                    accessEl.innerHTML = `
-                        <div class="indicator-label">${formatLabel(key)}</div>
-                        <div class="indicator-value">${value}</div>
-                    `;
-                    healthcareAccessEl.appendChild(accessEl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
+                
+                newsData = await response.json();
+                
+                // Populate category dropdown
+                populateCategoryDropdown();
+                
+                // Display news
+                displayNews(newsData);
+                
+                // Update the timestamp
+                document.getElementById('updateTime').textContent = new Date().toLocaleString();
+            } catch (error) {
+                console.error('Error loading news data:', error);
+                document.getElementById('newsContainer').innerHTML = 
+                    '<div class="col-12"><div class="alert alert-danger">Failed to load news data. Please try again later.</div></div>';
             }
-
-            // Create Disease Chart
-            if (data.diseaseSurveillance && data.diseaseSurveillance.prevalence) {
-                const ctx = document.getElementById('diseaseChart').getContext('2d');
-                const prevalence = data.diseaseSurveillance.prevalence;
-                
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: prevalence.map(item => item.disease),
-                        datasets: [{
-                            label: 'Cases per 100,000',
-                            data: prevalence.map(item => item.casesPerHundredThousand),
-                            backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Cases per 100,000 population'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Disease'
-                                }
-                            }
-                        }
-                    }
-                });
+        }
+        
+        // Populate category dropdown
+        function populateCategoryDropdown() {
+            const categoryDropdown = document.getElementById('categoryFilter');
+            
+            // Get unique categories
+            const categories = [...new Set(newsData.map(item => item.category))].sort();
+            
+            // Clear existing options except "All Categories"
+            while (categoryDropdown.options.length > 1) {
+                categoryDropdown.remove(1);
             }
-
-            // Populate Outbreak Alerts
-            if (data.diseaseSurveillance && data.diseaseSurveillance.outbreaks) {
-                const outbreakAlertsEl = document.getElementById('outbreakAlerts');
-                outbreakAlertsEl.innerHTML = '';
-                
-                data.diseaseSurveillance.outbreaks.forEach(outbreak => {
-                    const outbreakEl = document.createElement('div');
-                    outbreakEl.className = 'alert-box';
-                    outbreakEl.innerHTML = `
-                        <h3>${outbreak.disease} Outbreak</h3>
-                        <p><strong>Location:</strong> ${outbreak.location}</p>
-                        <p><strong>Cases:</strong> ${outbreak.cases}</p>
-                        <p><strong>Status:</strong> ${outbreak.status}</p>
-                        <p><strong>Date Reported:</strong> ${outbreak.dateReported}</p>
-                    `;
-                    outbreakAlertsEl.appendChild(outbreakEl);
-                });
+            
+            // Add category options
+            categories.forEach(category => {
+                if (category) { // Only add non-empty categories
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    categoryDropdown.appendChild(option);
+                }
+            });
+        }
+        
+        // Filter news by category
+        function filterByCategory() {
+            const categoryDropdown = document.getElementById('categoryFilter');
+            currentFilter = categoryDropdown.value;
+            
+            if (currentFilter === 'all') {
+                displayNews(newsData);
+            } else {
+                const filteredData = newsData.filter(item => item.category === currentFilter);
+                displayNews(filteredData);
             }
-
-            // Populate Healthcare Facilities
-            if (data.healthcareInfrastructure && data.healthcareInfrastructure.facilities) {
-                const facilitiesEl = document.getElementById('healthcareFacilities');
-                facilitiesEl.innerHTML = '';
+        }
+        
+        // Display news items
+        function displayNews(data) {
+            const container = document.getElementById('newsContainer');
+            container.innerHTML = '';
+            
+            if (data.length === 0) {
+                container.innerHTML = '<div class="col-12"><div class="alert alert-info">No news items found matching the selected criteria.</div></div>';
+                return;
+            }
+            
+            // Sort by date (newest first)
+            data.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            data.forEach(item => {
+                const newsCard = document.createElement('div');
+                newsCard.className = 'col-md-6 col-lg-4';
                 
-                const facilities = data.healthcareInfrastructure.facilities;
-                const facilitiesTable = document.createElement('table');
-                facilitiesTable.className = 'data-table';
-                
-                let tableHTML = `
-                    <tr>
-                        <th>Type</th>
-                        <th>Count</th>
-                        <th>Beds</th>
-                    </tr>
-                `;
-                
-                facilities.forEach(facility => {
-                    tableHTML += `
-                        <tr>
-                            <td>${facility.type}</td>
-                            <td>${facility.count}</td>
-                            <td>${facility.beds || 'N/A'}</td>
-                        </tr>
-                    `;
+                // Format the date
+                const dateObj = new Date(item.date);
+                const formattedDate = dateObj.toLocaleDateString('en-IN', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
                 });
                 
-                facilitiesTable.innerHTML = tableHTML;
-                facilitiesEl.appendChild(facilitiesTable);
+                // Use content field as summary
+                const summary = item.content || "No content available for this update.";
                 
-                // Create Facilities Chart
-                const ctx = document.getElementById('facilitiesChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: facilities.map(item => item.type),
-                        datasets: [{
-                            data: facilities.map(item => item.count),
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.7)',
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(255, 206, 86, 0.7)',
-                                'rgba(75, 192, 192, 0.7)',
-                                'rgba(153, 102, 255, 0.7)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
-            }
-
-            // Populate Healthcare Workforce
-            if (data.healthcareInfrastructure && data.healthcareInfrastructure.workforce) {
-                const workforceEl = document.getElementById('healthcareWorkforce');
-                workforceEl.innerHTML = '';
-                
-                const workforce = data.healthcareInfrastructure.workforce;
-                const workforceTable = document.createElement('table');
-                workforceTable.className = 'data-table';
-                
-                let tableHTML = `
-                    <tr>
-                        <th>Category</th>
-                        <th>Count</th>
-                        <th>Per 10,000 Population</th>
-                    </tr>
-                `;
-                
-                workforce.forEach(category => {
-                    tableHTML += `
-                        <tr>
-                            <td>${category.category}</td>
-                            <td>${category.count}</td>
-                            <td>${category.perTenThousand}</td>
-                        </tr>
-                    `;
-                });
-                
-                workforceTable.innerHTML = tableHTML;
-                workforceEl.appendChild(workforceTable);
-            }
-
-            // Create Budget Chart
-            if (data.healthFunding && data.healthFunding.budgetAllocation) {
-                const ctx = document.getElementById('budgetChart').getContext('2d');
-                const budget = data.healthFunding.budgetAllocation;
-                
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: budget.map(item => item.category),
-                        datasets: [{
-                            data: budget.map(item => item.percentage),
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.7)',
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(255, 206, 86, 0.7)',
-                                'rgba(75, 192, 192, 0.7)',
-                                'rgba(153, 102, 255, 0.7)',
-                                'rgba(255, 159, 64, 0.7)',
-                                'rgba(201, 203, 207, 0.7)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)',
-                                'rgba(201, 203, 207, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return `${context.label}: ${context.raw}%`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Populate Program Funding
-            if (data.healthFunding && data.healthFunding.programFunding) {
-                const fundingEl = document.getElementById('programFunding');
-                fundingEl.innerHTML = '';
-                
-                data.healthFunding.programFunding.forEach(program => {
-                    const programEl = document.createElement('div');
-                    programEl.innerHTML = `
-                        <h3>${program.program}</h3>
-                        <div>Budget: ${program.budget}</div>
-                        <div>Utilization: ${program.utilizationPercentage}%</div>
-                        <div class="funding-progress">
-                            <div class="progress-bar" style="width: ${program.utilizationPercentage}%">${program.utilizationPercentage}%</div>
+                newsCard.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            ${item.category || "Uncategorized"}
                         </div>
-                    `;
-                    fundingEl.appendChild(programEl);
-                });
-            }
-
-            // Populate Active Campaigns
-            if (data.publicHealthCampaigns && data.publicHealthCampaigns.activeCampaigns) {
-                const campaignsEl = document.getElementById('activeCampaigns');
-                campaignsEl.innerHTML = '';
+                        <div class="card-body">
+                            <h5 class="card-title">${item.title}</h5>
+                            <p class="news-date">${formattedDate}</p>
+                            <p class="news-summary">${summary}</p>
+                            <a href="${item.link}" class="read-more" target="_blank">Read Full Article <i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+                `;
                 
-                data.publicHealthCampaigns.activeCampaigns.forEach(campaign => {
-                    const campaignEl = document.createElement('div');
-                    campaignEl.className = 'info-box';
-                    campaignEl.innerHTML = `
-                        <h3>${campaign.name}</h3>
-                        <p>${campaign.description}</p>
-                        <div><strong>Target:</strong> ${campaign.target}</div>
-                        <div><strong>Timeline:</strong> ${campaign.timeline}</div>
-                        <div><strong>Status:</strong> ${campaign.status}</div>
-                    `;
-                    campaignsEl.appendChild(campaignEl);
-                });
-            }
+                container.appendChild(newsCard);
+            });
         }
-
-        function formatLabel(str) {
-            return str
-                .replace(/([A-Z])/g, ' $1')
-                .replace(/^./, function(str) { return str.toUpperCase(); });
+        
+        // Refresh data
+        function refreshData() {
+            loadNewsData();
         }
-
-        // Load data when the page loads
-        window.addEventListener('DOMContentLoaded', loadData);
+        
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadNewsData);
     </script>
 </body>
 </html>
