@@ -1,206 +1,272 @@
-[
+// The original data with added summaries
+const categorizedDataWithSummaries = [
   {
     "title": "Steps taken by the Government to increase surveillance and awareness of Antimicrobial Resistance (AMR)",
     "date": "28 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116222",
-    "category": "Antimicrobial-Resistance (AMR)"
+    "category": "Antimicrobial-Resistance (AMR)",
+    "summary": "Details government initiatives to combat antimicrobial resistance through enhanced surveillance systems, awareness campaigns, and implementation of the National Action Plan on AMR."
   },
   {
     "title": "Steps taken by the Government of India to maintain quality of education in pharmacy sector",
     "date": "28 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116221",
-    "category": "Pharmaceuticals"
+    "category": "Pharmaceuticals",
+    "summary": "Outlines measures taken to ensure high-quality pharmacy education, including strengthened regulations, updated curriculum standards, and quality assurance mechanisms by the Pharmacy Council of India."
   },
   {
     "title": "Update on National Quality Assurance Standards (NQAS)",
     "date": "28 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116213",
-    "category": "Health Systems and Infrastructure"
+    "category": "Health Systems and Infrastructure",
+    "summary": "Reports on the progress of NQAS implementation across healthcare facilities, highlighting improvements in quality of care and patient safety through standardized protocols and certification."
   },
   {
     "title": "Update on Ayushman Bharat Pradhan Mantri Jan Arogya Yojana (AB PM-JAY)",
     "date": "28 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116209",
-    "category": "Health Systems and Infrastructure"
+    "category": "Health Systems and Infrastructure",
+    "summary": "Presents the latest data on India's flagship health insurance scheme, including beneficiary enrollment, treatments provided, and expansion efforts to increase healthcare access for vulnerable populations."
   },
   {
-    "title": "National Consultation on Adolescent Nutrition: Let’s Fix Our Food (LFOF) Consortium convened at Indian Council of Medical Research (ICMR)",
+    "title": "National Consultation on Adolescent Nutrition: Let's Fix Our Food (LFOF) Consortium convened at Indian Council of Medical Research (ICMR)",
     "date": "28 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116146",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Covers outcomes from the national consultation on improving adolescent nutrition in India, featuring collaborative initiatives by the LFOF Consortium to address nutritional challenges among youth."
   },
   {
     "title": "Union Health Ministry Releases National Guidelines on Medical Oxygen Management",
     "date": "27 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2115648",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Announces new comprehensive guidelines for medical oxygen management in healthcare facilities, incorporating lessons learned during the pandemic to ensure reliable oxygen supply during emergencies."
   },
   {
     "title": "Measures taken to reduce healthcare costs",
     "date": "25 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114761",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Describes government initiatives to make healthcare more affordable, including price controls on essential medicines, promotion of generic drugs, and expansion of public health insurance coverage."
   },
   {
     "title": "Update on Ayushman Arogya Mandir",
     "date": "25 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114759",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Provides progress on the establishment of Ayushman Arogya Mandir centers across India, focusing on their role in delivering primary healthcare services and preventive care in underserved areas."
   },
   {
     "title": "Steps taken on Mental Health",
     "date": "25 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114756",
-    "category": "Non-Communicable Diseases"
+    "category": "Non-Communicable Diseases",
+    "summary": "Outlines initiatives under the National Mental Health Program, including expanded mental health services, awareness campaigns, and integration of mental healthcare into primary health systems."
   },
   {
     "title": "Steps taken to expand healthcare professionals in rural areas",
     "date": "25 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114753",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Details strategies to address the shortage of healthcare workers in rural India, including incentive programs, educational reforms, and telemedicine initiatives to improve rural healthcare access."
   },
   {
     "title": "ICMR Pioneers Drone-Based Cornea Transport to Revolutionize Eye Care",
     "date": "25 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114748",
-    "category": "Medical Technologies"
+    "category": "Medical Technologies",
+    "summary": "Highlights ICMR's innovative drone technology deployment for swift transportation of corneas for transplantation, significantly reducing delivery time and improving outcomes for eye patients."
   },
   {
     "title": "Union Health Minister Shri JP Nadda Inaugurates World TB Day 2025 Summit",
     "date": "24 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114554",
-    "category": "Infectious Diseases"
+    "category": "Infectious Diseases",
+    "summary": "Covers the World TB Day Summit inauguration, where the Health Minister highlighted India's progress toward TB elimination and renewed commitments to achieve TB-free status by 2025."
   },
   {
     "title": "World Tuberculosis (TB) Day – 2025",
     "date": "24 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114549",
-    "category": "Infectious Diseases"
+    "category": "Infectious Diseases",
+    "summary": "Reports on nationwide activities marking World TB Day, emphasizing community engagement, awareness campaigns, and achievements of the National TB Elimination Program."
   },
   {
     "title": "Saving Mothers, Strengthening Futures",
     "date": "21 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2113800",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Presents initiatives to reduce maternal mortality in India through improved antenatal care, institutional deliveries, and strengthened emergency obstetric services under various government programs."
   },
   {
     "title": "President of India, Smt. Droupadi Murmu Addresses 49th Annual Convocation of All India Institute of Medical Sciences, New Delhi",
     "date": "21 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2113793",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Summarizes the President's address at AIIMS convocation, where she encouraged new medical graduates to serve with compassion and highlighted India's advances in medical education and healthcare."
   },
   {
     "title": "Update on bio-safety laboratories in the country",
     "date": "21 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2113685",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Provides status update on India's network of bio-safety laboratories, including infrastructure improvements, capacity building, and adherence to international safety standards for handling pathogens."
   },
   {
     "title": "Measures taken by the government to use AI in the public health system",
     "date": "21 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2113683",
-    "category": "Public Health"
+    "category": "Public Health",
+    "summary": "Details initiatives to integrate artificial intelligence into healthcare delivery, including disease surveillance, diagnostic support, predictive analytics, and AI-powered telemedicine services."
   },
   {
     "title": "Steps taken by the Government to ensure quality standards of food products",
     "date": "21 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2113681",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Outlines food safety measures implemented by FSSAI, including strengthened regulatory framework, increased testing capabilities, and enhanced enforcement to ensure safe food for consumers."
   },
   {
     "title": "Steps taken by the Government to expand healthcare infrastructure",
     "date": "21 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2113679",
-    "category": "Health Systems and Infrastructure"
+    "category": "Health Systems and Infrastructure",
+    "summary": "Reports on initiatives to strengthen healthcare facilities across India, focusing on new hospital construction, upgradation of existing centers, and development of specialized medical institutions."
   },
   {
     "title": "Update on elimination of Trachoma and Malaria",
     "date": "18 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2112480",
-    "category": "Infectious Diseases"
+    "category": "Infectious Diseases",
+    "summary": "Provides progress report on India's efforts to eliminate trachoma and malaria, highlighting surveillance data, intervention strategies, and regional success stories in disease control."
   },
   {
     "title": "Steps taken under TB-Mukt Bharat Abhiyan",
     "date": "18 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2112478",
-    "category": "Infectious Diseases"
+    "category": "Infectious Diseases",
+    "summary": "Details achievements of the TB-Free India campaign, including active case finding, treatment adherence initiatives, nutritional support for patients, and engagement of community health workers."
   },
   {
     "title": "Update on Maternal and Child Health Indicators under NHM",
     "date": "18 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2112476",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Presents latest statistics on key maternal and child health metrics under the National Health Mission, showing improvements in institutional deliveries, immunization coverage, and child nutrition."
   },
   {
     "title": "Union Minister of State for Health and Family Welfare, Smt. Anupriya Patel inaugurates the India Innovation Summit – Pioneering Solutions to End TB",
     "date": "18 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2112158",
-    "category": "Infectious Diseases"
+    "category": "Infectious Diseases",
+    "summary": "Covers the launch of an innovation summit focused on developing technological and programmatic solutions to accelerate India's progress toward TB elimination through multi-sectoral collaboration."
   },
   {
     "title": "Union Minister of State for Health and Family Welfare, Smt. Anupriya Patel inaugurates QUAD Workshop on Pandemic Preparedness for Indo-Pacific Region",
     "date": "17 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2111705",
-    "category": "Infectious Diseases"
+    "category": "Infectious Diseases",
+    "summary": "Reports on the QUAD nations' workshop addressing regional pandemic preparedness, focusing on strengthening early warning systems, emergency response capabilities, and collaborative research."
   },
   {
-    "title": "Update on “75/25” Initiative",
+    "title": "Update on "75/25" Initiative",
     "date": "11 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2110390",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Provides status update on the 75/25 Initiative, which aims to increase health facility accessibility with 75% of citizens having access to essential healthcare services within 25 minutes of travel time."
   },
   {
     "title": "Steps taken to prioritize Research on Fungal Infections",
     "date": "11 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2110387",
-    "category": "Infectious Diseases"
+    "category": "Infectious Diseases",
+    "summary": "Outlines government efforts to advance research on fungal diseases, including increased funding, establishment of specialized research centers, and development of diagnostic and treatment protocols."
   },
   {
     "title": "Update on National Ambulance Services (NAS) Scheme",
     "date": "11 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2110385",
-    "category": "Health Systems and Infrastructure"
+    "category": "Health Systems and Infrastructure",
+    "summary": "Reports on the expansion of emergency medical transportation services across India, highlighting improved response times, enhanced ambulance fleet, and specialized training for emergency personnel."
   },
   {
     "title": "Steps taken to treat cases of Cancer, emanating from Cancer-Causing Rivers",
     "date": "11 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2110384",
-    "category": "Non-Communicable Diseases"
+    "category": "Non-Communicable Diseases",
+    "summary": "Details interventions addressing cancer clusters in regions affected by polluted rivers, including environmental remediation, specialized cancer treatment facilities, and screening programs for at-risk populations."
   },
   {
     "title": "Union Minister of Health and Family Welfare, Shri JP Nadda virtually presides over the 48th Annual Day Celebration of NIHFW, in the presence of Union Minister of State for Health and Family Welfare, Smt. Anupriya Patel",
     "date": "09 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2109624",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Covers the National Institute of Health and Family Welfare's anniversary celebration, highlighting the institute's contributions to public health research, training, and policy implementation."
   },
   {
     "title": "Union Health Minister Shri JP Nadda inaugurates third International Symposium on Health Technology Assessment 2025",
     "date": "08 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2109392",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Reports on the international symposium focusing on evidence-based assessment of health technologies to inform policy decisions, resource allocation, and healthcare prioritization."
   },
   {
-    "title": "Union Health Minister Shri Jagat Prakash Nadda Reviews AIIMS Bilaspur’s Milestones and Development Progress",
+    "title": "Union Health Minister Shri Jagat Prakash Nadda Reviews AIIMS Bilaspur's Milestones and Development Progress",
     "date": "07 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2109307",
-    "category": "Health Systems and Infrastructure"
+    "category": "Health Systems and Infrastructure",
+    "summary": "Provides details from the Health Minister's review of AIIMS Bilaspur development, including infrastructure completion, service expansion, and educational program implementation."
   },
   {
-    "title": "Prime Minister Shri Narendra Modi addresses the Post-Budget Webinar on the theme ‘Investing in People’",
+    "title": "Prime Minister Shri Narendra Modi addresses the Post-Budget Webinar on the theme 'Investing in People'",
     "date": "05 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2108672",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Summarizes the PM's address highlighting budget allocations for healthcare, education, and skill development, emphasizing human capital investment as a national priority for sustainable growth."
   },
   {
     "title": "Union Health Minister Shri JP Nadda chairs 9th meeting of Mission Steering Group for National Health Mission",
     "date": "04 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2108121",
-    "category": "Others"
+    "category": "Others",
+    "summary": "Covers key decisions from the NHM steering group meeting, including program expansions, funding allocations, and strategic priorities for strengthening primary healthcare services nationwide."
   },
   {
     "title": "Union Health Minister Shri JP Nadda visits Rural Health Training Center, Najafgarh and Ayushman Arogya Mandir, Palam; interacts with Patients and Medical Staff",
     "date": "03 Mar 2025",
     "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2107742",
-    "category": "Health Systems and Infrastructure"
+    "category": "Health Systems and Infrastructure",
+    "summary": "Details the Health Minister's visit to healthcare facilities in Delhi's peripheral areas, where he assessed service delivery, gathered feedback from patients, and engaged with frontline health workers."
   }
-]
+];
+
+// You can easily access this data in your app to display summaries on your dashboard
+// Example: Display all articles with their summaries
+function displayArticleSummaries() {
+  categorizedDataWithSummaries.forEach(article => {
+    console.log(`Title: ${article.title}`);
+    console.log(`Date: ${article.date}`);
+    console.log(`Category: ${article.category}`);
+    console.log(`Summary: ${article.summary}`);
+    console.log('-------------------');
+  });
+}
+
+// Example: Filter articles by category
+function getArticlesByCategory(category) {
+  return categorizedDataWithSummaries.filter(article => article.category === category);
+}
+
+// Example: Display recent articles (within last 7 days)
+function getRecentArticles() {
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  return categorizedDataWithSummaries.filter(article => {
+    const articleDate = new Date(article.date);
+    return articleDate >= sevenDaysAgo;
+  });
+}
+
+// Export the data for use in your application
+export default categorizedDataWithSummaries;
