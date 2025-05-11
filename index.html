@@ -1,348 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PIB Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            width: 95%;
-            margin: 20px auto;
-        }
-        .header {
-            background-color: #005792;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .filters {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .filter-group {
-            margin-bottom: 15px;
-        }
-        .filter-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .filter-group select {
-            width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-        .dashboard {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 20px;
-            background-color: white;
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .categories {
-            background-color: #f8f8f8;
-            padding: 20px;
-            height: calc(100vh - 200px);
-            overflow-y: auto;
-        }
-        .category {
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .category:hover {
-            background-color: #e9e9e9;
-        }
-        .category.active {
-            background-color: #005792;
-            color: white;
-        }
-        .articles {
-            padding: 20px;
-            height: calc(100vh - 200px);
-            overflow-y: auto;
-        }
-        .article {
-            margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            background-color: #f8f8f8;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .article h3 {
-            margin-top: 0;
-            color: #005792;
-        }
-        .article-meta {
-            color: #777;
-            font-size: 0.9em;
-            margin-bottom: 10px;
-        }
-        .article-summary {
-            background-color: #f0f7ff;
-            padding: 10px;
-            border-left: 3px solid #005792;
-            margin: 10px 0;
-            border-radius: 0 5px 5px 0;
-        }
-        .article-link {
-            display: block;
-            margin-top: 10px;
-            color: #005792;
-            text-decoration: none;
-        }
-        .article-link:hover {
-            text-decoration: underline;
-        }
-        .no-articles {
-            color: #777;
-            font-style: italic;
-        }
-        .category-count {
-            float: right;
-            background-color: #ddd;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.8em;
-            color: #333;
-        }
-        .active .category-count {
-            background-color: white;
-            color: #005792;
-        }
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #777;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PIB Health News Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .category {
+      margin-top: 40px;
+    }
+
+    .category h2 {
+      background: #e8f5e9;
+      padding: 10px;
+      border-left: 5px solid #4CAF50;
+    }
+
+    .article {
+      margin-bottom: 20px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .article-title {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #1a0dab;
+      text-decoration: none;
+    }
+
+    .article-date {
+      color: #777;
+      font-size: 0.9em;
+    }
+
+    .article-summary {
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>PIB Dashboard</h1>
-        </div>
-        
-        <div class="filters">
-            <div class="filter-group">
-                <label for="date-filter">Filter by Date:</label>
-                <select id="date-filter">
-                    <option value="all">All Dates</option>
-                    <!-- Will be populated dynamically -->
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label for="ministry-filter">Filter by Ministry:</label>
-                <select id="ministry-filter">
-                    <option value="all">All Ministries</option>
-                    <!-- Will be populated dynamically -->
-                </select>
-            </div>
-        </div>
-        
-        <div class="dashboard">
-            <div class="categories" id="categories-container">
-                <div class="loading">Loading categories...</div>
-            </div>
-            
-            <div class="articles" id="articles-container">
-                <div class="loading">Select a category to view articles</div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // Global variables
-        let categorizedData = null;
-        let filteredData = null;
-        let selectedCategory = null;
-        
-        // Fetch data
-        fetch('categorized_data.json')
-            .then(response => response.json())
-            .then(data => {
-                categorizedData = data;
-                filteredData = {...categorizedData};
-                
-                // Initialize the dashboard
-                populateFilters();
-                renderCategories();
-            })
-            .catch(error => {
-                console.error('Error loading data:', error);
-                document.getElementById('categories-container').innerHTML = '<div class="error">Error loading data. Please try again later.</div>';
-            });
-        
-        // Populate filter dropdowns
-        function populateFilters() {
-            // Get unique dates
-            const dates = new Set();
-            const ministries = new Set();
-            
-            Object.keys(categorizedData).forEach(category => {
-                categorizedData[category].forEach(article => {
-                    if (article.date) dates.add(article.date);
-                    if (article.ministry) ministries.add(article.ministry);
-                });
-            });
-            
-            // Populate date filter
-            const dateFilter = document.getElementById('date-filter');
-            Array.from(dates).sort().reverse().forEach(date => {
-                const option = document.createElement('option');
-                option.value = date;
-                option.textContent = date;
-                dateFilter.appendChild(option);
-            });
-            
-            // Populate ministry filter
-            const ministryFilter = document.getElementById('ministry-filter');
-            Array.from(ministries).sort().forEach(ministry => {
-                const option = document.createElement('option');
-                option.value = ministry;
-                option.textContent = ministry;
-                ministryFilter.appendChild(option);
-            });
-            
-            // Add event listeners
-            dateFilter.addEventListener('change', applyFilters);
-            ministryFilter.addEventListener('change', applyFilters);
-        }
-        
-        // Apply filters
-        function applyFilters() {
-            const dateFilter = document.getElementById('date-filter').value;
-            const ministryFilter = document.getElementById('ministry-filter').value;
-            
-            filteredData = {};
-            
-            Object.keys(categorizedData).forEach(category => {
-                const filteredArticles = categorizedData[category].filter(article => {
-                    const dateMatch = dateFilter === 'all' || article.date === dateFilter;
-                    const ministryMatch = ministryFilter === 'all' || article.ministry === ministryFilter;
-                    return dateMatch && ministryMatch;
-                });
-                
-                if (filteredArticles.length > 0) {
-                    filteredData[category] = filteredArticles;
-                }
-            });
-            
-            renderCategories();
-            
-            // If we had a selected category, try to reselect it
-            if (selectedCategory && filteredData[selectedCategory]) {
-                selectCategory(selectedCategory);
-            } else {
-                // Otherwise clear the articles
-                document.getElementById('articles-container').innerHTML = '<div class="no-articles">Select a category to view articles</div>';
-                selectedCategory = null;
-            }
-        }
-        
-        // Render categories
-        function renderCategories() {
-            const categoriesContainer = document.getElementById('categories-container');
-            categoriesContainer.innerHTML = '';
-            
-            if (Object.keys(filteredData).length === 0) {
-                categoriesContainer.innerHTML = '<div class="no-articles">No categories match the current filters</div>';
-                return;
-            }
-            
-            Object.keys(filteredData).sort().forEach(category => {
-                const categoryElement = document.createElement('div');
-                categoryElement.className = 'category';
-                categoryElement.innerHTML = `
-                    ${category}
-                    <span class="category-count">${filteredData[category].length}</span>
-                `;
-                
-                categoryElement.addEventListener('click', () => selectCategory(category));
-                
-                if (category === selectedCategory) {
-                    categoryElement.classList.add('active');
-                }
-                
-                categoriesContainer.appendChild(categoryElement);
-            });
-        }
-        
-        // Select category
-        function selectCategory(category) {
-            selectedCategory = category;
-            
-            // Update category styling
-            document.querySelectorAll('.category').forEach(el => {
-                el.classList.remove('active');
-                if (el.textContent.trim().startsWith(category)) {
-                    el.classList.add('active');
-                }
-            });
-            
-            // Render articles
-            renderArticles(category);
-        }
-        
-        // Render articles
-        function renderArticles(category) {
-            const articlesContainer = document.getElementById('articles-container');
-            articlesContainer.innerHTML = '';
-            
-            if (!filteredData[category] || filteredData[category].length === 0) {
-                articlesContainer.innerHTML = '<div class="no-articles">No articles in this category match the current filters</div>';
-                return;
-            }
-            
-            filteredData[category].forEach(article => {
-                const articleElement = document.createElement('div');
-                articleElement.className = 'article';
-                
-                let articleContent = `
-                    <h3>${article.title || 'Untitled'}</h3>
-                    <div class="article-meta">
-                        ${article.date ? `<span>Date: ${article.date}</span>` : ''}
-                        ${article.ministry ? `<span> | Ministry: ${article.ministry}</span>` : ''}
-                    </div>
-                `;
-                
-                // Add summary section if available
-                if (article.summary) {
-                    articleContent += `
-                        <div class="article-summary">
-                            <strong>Summary:</strong> ${article.summary}
-                        </div>
-                    `;
-                }
-                
-                // Add link if available
-                if (article.url) {
-                    articleContent += `<a href="${article.url}" target="_blank" class="article-link">Read full article</a>`;
-                }
-                
-                articleElement.innerHTML = articleContent;
-                articlesContainer.appendChild(articleElement);
-            });
-        }
-    </script>
+  <h1>📰 PIB Health News Dashboard</h1>
+  <div id="news-container">Loading news articles...</div>
+
+  <script>
+    async function loadNews() {
+      const container = document.getElementById("news-container");
+      container.innerHTML = "";
+
+      try {
+        const response = await fetch("https://raw.githubusercontent.com/vipscode/Experiment_PIB/main/data/categorized_data.json");
+        if (!response.ok) throw new Error("Failed to fetch data");
+
+        const data = await response.json();
+
+        // Group by category
+        const grouped = {};
+        data.forEach(item => {
+          const category = item.category || "Uncategorized";
+          if (!grouped[category]) grouped[category] = [];
+          grouped[category].push(item);
+        });
+
+        // Sort categories alphabetically
+        const sortedCategories = Object.keys(grouped).sort();
+
+        sortedCategories.forEach(category => {
+          const catDiv = document.createElement("div");
+          catDiv.className = "category";
+          catDiv.innerHTML = `<h2>${category}</h2>`;
+
+          grouped[category].forEach(article => {
+            const articleDiv = document.createElement("div");
+            articleDiv.className = "article";
+            articleDiv.innerHTML = `
+              <a href="${article.link}" class="article-title" target="_blank">${article.title}</a>
+              <div class="article-date">${article.date}</div>
+              <div class="article-summary">${article.content}</div>
+            `;
+            catDiv.appendChild(articleDiv);
+          });
+
+          container.appendChild(catDiv);
+        });
+      } catch (error) {
+        container.innerHTML = "<p>❌ Failed to load news data.</p>";
+        console.error("Error loading news:", error);
+      }
+    }
+
+    loadNews();
+  </script>
 </body>
 </html>
