@@ -1,4 +1,3 @@
-// The original data with added summaries
 const categorizedDataWithSummaries = [
   {
     "title": "Steps taken by the Government to increase surveillance and awareness of Antimicrobial Resistance (AMR)",
@@ -240,8 +239,6 @@ const categorizedDataWithSummaries = [
   }
 ];
 
-// You can easily access this data in your app to display summaries on your dashboard
-// Example: Display all articles with their summaries
 function displayArticleSummaries() {
   categorizedDataWithSummaries.forEach(article => {
     console.log(`Title: ${article.title}`);
@@ -252,12 +249,12 @@ function displayArticleSummaries() {
   });
 }
 
-// Example: Filter articles by category
+
 function getArticlesByCategory(category) {
   return categorizedDataWithSummaries.filter(article => article.category === category);
 }
 
-// Example: Display recent articles (within last 7 days)
+
 function getRecentArticles() {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
