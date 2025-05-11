@@ -1,111 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PIB Health News Dashboard</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      line-height: 1.6;
-      background-color: #f9f9f9;
-    }
-
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-
-    .category {
-      margin-top: 40px;
-    }
-
-    .category h2 {
-      background: #e8f5e9;
-      padding: 10px;
-      border-left: 5px solid #4CAF50;
-    }
-
-    .article {
-      margin-bottom: 20px;
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .article-title {
-      font-size: 1.1em;
-      font-weight: bold;
-      color: #1a0dab;
-      text-decoration: none;
-    }
-
-    .article-date {
-      color: #777;
-      font-size: 0.9em;
-    }
-
-    .article-summary {
-      margin-top: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIB Health News Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .dashboard-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #0d6efd;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            font-weight: bold;
+            background-color: #0d6efd;
+            color: white;
+        }
+        .news-item {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .news-item:last-child {
+            border-bottom: none;
+        }
+        .news-date {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 30px;
+        }
+        .filtered-results {
+            margin-top: 20px;
+        }
+        .news-link {
+            text-decoration: none;
+            color: #0d6efd;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .news-link:hover {
+            text-decoration: underline;
+        }
+        .news-summary {
+            font-size: 0.9rem;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+        #dateFilter {
+            max-width: 150px;
+        }
+        #searchInput {
+            max-width: 300px;
+        }
+        .filter-controls {
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .stats-banner {
+            background-color: white;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+        .stat-label {
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
-  <h1>📰 PIB Health News Dashboard</h1>
-  <div id="news-container">Loading news articles...</div>
+    <div class="container">
+        <h1 class="dashboard-title">PIB Health News Dashboard</h1>
 
-  <script>
-    async function loadNews() {
-      const container = document.getElementById("news-container");
-      container.innerHTML = "";
+        <!-- Stats Banner -->
+        <div class="row stats-banner">
+            <div class="col-md-4 stat-item">
+                <div class="stat-number" id="totalArticles">0</div>
+                <div class="stat-label">Total Articles</div>
+            </div>
+            <div class="col-md-4 stat-item">
+                <div class="stat-number" id="totalCategories">0</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="col-md-4 stat-item">
+                <div class="stat-number" id="latestUpdate">-</div>
+                <div class="stat-label">Latest Update</div>
+            </div>
+        </div>
 
-      try {
-        console.log("Attempting to fetch from: data/categorized_data.json");
-        const response = await fetch('data/categorized_data.json');
-        console.log("Fetch response status:", response.status);
-        if (!response.ok) throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+        <!-- Filter Controls -->
+        <div class="row filter-controls">
+            <div class="col-md-4">
+                <label for="categoryFilter" class="form-label">Filter by Category:</label>
+                <select id="categoryFilter" class="form-select">
+                    <option value="all">All Categories</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="dateFilter" class="form-label">Filter by Date:</label>
+                <input type="date" id="dateFilter" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label for="searchInput" class="form-label">Search:</label>
+                <input type="text" id="searchInput" class="form-control" placeholder="Search articles...">
+            </div>
+        </div>
 
-        const data = await response.json();
-        console.log("Data loaded successfully, first item:", data[0]);
+        <!-- Charts -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <canvas id="timelineChart"></canvas>
+                </div>
+            </div>
+        </div>
 
-        // Group by category
-        const grouped = {};
-        data.forEach(item => {
-          const category = item.category || "Uncategorized";
-          if (!grouped[category]) grouped[category] = [];
-          grouped[category].push(item);
-        });
+        <!-- News Categories -->
+        <div class="row" id="categoriesContainer">
+            <!-- Categories will be dynamically inserted here -->
+        </div>
 
-        // Sort categories alphabetically
-        const sortedCategories = Object.keys(grouped).sort();
+        <!-- Filtered Results -->
+        <div class="filtered-results">
+            <div class="card">
+                <div class="card-header">Filtered Results</div>
+                <div class="card-body" id="filteredResults">
+                    <!-- Filtered results will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
 
-        sortedCategories.forEach(category => {
-          const catDiv = document.createElement("div");
-          catDiv.className = "category";
-          catDiv.innerHTML = `<h2>${category}</h2>`;
+    <script>
+        // Load the data from the JSON file
+        fetch('categorized_data.json')
+            .then(response => response.json())
+            .then(data => {
+                // Initialize dashboard with data
+                initializeDashboard(data);
+            })
+            .catch(error => {
+                console.error('Error loading data:', error);
+                document.getElementById('categoriesContainer').innerHTML = '<div class="col-12"><div class="alert alert-danger">Error loading data. Please try again later.</div></div>';
+            });
 
-          grouped[category].forEach(article => {
-            const articleDiv = document.createElement("div");
-            articleDiv.className = "article";
-            articleDiv.innerHTML = `
-              <a href="${article.link}" class="article-title" target="_blank">${article.title}</a>
-              <div class="article-date">${article.date}</div>
-              <div class="article-summary">${article.content}</div>
-            `;
-            catDiv.appendChild(articleDiv);
-          });
-
-          container.appendChild(catDiv);
-        });
-      } catch (error) {
-        container.innerHTML = "<p>❌ Failed to load news data.</p>";
-        console.error("Error loading news:", error);
-      }
-    }
-
-    loadNews();
-  </script>
+        function initializeDashboard(categorizedData) {
+            // Update stats
+            document.getElementById('totalArticles').textContent = categorizedData.length;
+            
+            // Extract categories and count articles per category
+            const categories = {};
+            const dateCount = {};
+            let latestDate = '';
+            
+            categorizedData.forEach(item => {
+                // Count categories
+                if (categories[item.category]) {
+                    categories[item.category]++;
+                } else {
+                    categories[item.category] = 1;
+                }
+                
+                // Count dates
+                const date = item.date;
+                if (dateCount[date]) {
+                    dateCount[date]++;
+                } else {
+                    dateCount[date] = 1;
+                }
+                
+                // Track latest date
+                if (!latestDate || new Date(date) > new Date(latestDate)) {
+                    latestDate = date;
+                }
+            });
+            
+            // Update UI with stats
+            document.getElementById('totalCategories').textContent = Object.keys(categories).length;
+            document.getElementById('latestUpdate').textContent = latestDate;
+            
+            // Create category filter options
+            const categoryFilter = document.getElementById('categoryFilter');
+            Object.keys(categories).sort().forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
+            });
+            
+            // Create charts
+            createCategoryChart(categories);
+            createTimelineChart(dateCount);
+            
+            // Create category cards
+            createCategoryCards(categorizedData, categories);
+            
+            // Set up event listeners for filters
+            document.getElementById('categoryFilter').addEventListener('change', () => filterArticles(categorizedData));
+            document.getElementById('dateFilter').addEventListener('change', () => filterArticles(categorizedData));
+            document.getElementById('searchInput').addEventListener('input', () => filterArticles(categorizedData));
+            
+            // Initial filter
+            filterArticles(categorizedData);
+        }
+        
+        function createCategoryChart(categories) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            
+            // Sort categories by count
+            const sortedCategories = Object.entries(categories)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10); // Show top 10 categories
+                
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedCategories.map(item => item[0]),
+                    datasets: [{
+                        label: 'Articles per Category',
+                        data: sortedCategories.map(item => item[1]),
+                        backgroundColor: 'rgba(13, 110, 253, 0.7)',
+                        borderColor: 'rgba(13, 110, 253, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 90,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createTimelineChart(dateCount) {
+            const ctx = document.getElementById('timelineChart').getContext('2d');
+            
+            // Sort dates chronologically
+            const sortedDates = Object.entries(dateCount)
+                .sort((a, b) => new Date(a[0]) - new Date(b[0]));
+                
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedDates.map(item => item[0]),
+                    datasets: [{
+                        label: 'Articles per Date',
+                        data: sortedDates.map(item => item[1]),
+                        fill: false,
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 90,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createCategoryCards(categorizedData, categories) {
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '';
+            
+            // Sort categories by count (descending)
+            const sortedCategories = Object.entries(categories)
+                .sort((a, b) => b[1] - a[1]);
+                
+            sortedCategories.forEach(([category, count]) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'col-md-6 mb-4';
+                
+                const card = document.createElement('div');
+                card.className = 'card h-100';
+                
+                const cardHeader = document.createElement('div');
+                cardHeader.className = 'card-header d-flex justify-content-between align-items-center';
+                cardHeader.innerHTML = `
+                    <span>${category}</span>
+                    <span class="badge bg-primary">${count}</span>
+                `;
+                
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+                
+                // Get articles for this category
+                const articles = categorizedData
+                    .filter(item => item.category === category)
+                    .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date (newest first)
+                
+                articles.forEach(article => {
+                    const articleDiv = document.createElement('div');
+                    articleDiv.className = 'news-item';
+                    
+                    // Format the article with title, date, and summary
+                    articleDiv.innerHTML = `
+                        <a href="${article.link}" target="_blank" class="news-link">${article.title}</a>
+                        <div class="news-date">${article.date}</div>
+                        <div class="news-summary">${article.summary || 'No summary available'}</div>
+                    `;
+                    
+                    cardBody.appendChild(articleDiv);
+                });
+                
+                card.appendChild(cardHeader);
+                card.appendChild(cardBody);
+                categoryDiv.appendChild(card);
+                container.appendChild(categoryDiv);
+            });
+        }
+        
+        function filterArticles(categorizedData) {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const searchFilter = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filteredData = categorizedData;
+            
+            // Apply category filter
+            if (categoryFilter !== 'all') {
+                filteredData = filteredData.filter(item => item.category === categoryFilter);
+            }
+            
+            // Apply date filter
+            if (dateFilter) {
+                // Convert dates to comparable format
+                const filterDate = new Date(dateFilter).toISOString().split('T')[0];
+                filteredData = filteredData.filter(item => {
+                    // Convert item date to comparable format (handle different date formats)
+                    const itemDate = new Date(item.date).toISOString().split('T')[0];
+                    return itemDate === filterDate;
+                });
+            }
+            
+            // Apply search filter
+            if (searchFilter) {
+                filteredData = filteredData.filter(item => 
+                    item.title.toLowerCase().includes(searchFilter) || 
+                    item.category.toLowerCase().includes(searchFilter) ||
+                    (item.summary && item.summary.toLowerCase().includes(searchFilter))
+                );
+            }
+            
+            // Update filtered results
+            const resultsContainer = document.getElementById('filteredResults');
+            
+            if (filteredData.length === 0) {
+                resultsContainer.innerHTML = '<div class="alert alert-info">No articles match your filters.</div>';
+            } else {
+                resultsContainer.innerHTML = '';
+                
+                // Sort by date (newest first)
+                filteredData.sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .forEach(article => {
+                        const articleDiv = document.createElement('div');
+                        articleDiv.className = 'news-item';
+                        
+                        articleDiv.innerHTML = `
+                            <a href="${article.link}" target="_blank" class="news-link">${article.title}</a>
+                            <div class="news-date">${article.date} | Category: ${article.category}</div>
+                            <div class="news-summary">${article.summary || 'No summary available'}</div>
+                        `;
+                        
+                        resultsContainer.appendChild(articleDiv);
+                    });
+            }
+        }
+    </script>
 </body>
 </html>
