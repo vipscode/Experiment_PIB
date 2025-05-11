@@ -1,4 +1,4 @@
-const categorizedDataWithSummaries = [
+[
   {
     "title": "Steps taken by the Government to increase surveillance and awareness of Antimicrobial Resistance (AMR)",
     "date": "28 Mar 2025",
@@ -239,31 +239,5 @@ const categorizedDataWithSummaries = [
   }
 ];
 
-function displayArticleSummaries() {
-  categorizedDataWithSummaries.forEach(article => {
-    console.log(`Title: ${article.title}`);
-    console.log(`Date: ${article.date}`);
-    console.log(`Category: ${article.category}`);
-    console.log(`Summary: ${article.summary}`);
-    console.log('-------------------');
-  });
-}
 
 
-function getArticlesByCategory(category) {
-  return categorizedDataWithSummaries.filter(article => article.category === category);
-}
-
-
-function getRecentArticles() {
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  
-  return categorizedDataWithSummaries.filter(article => {
-    const articleDate = new Date(article.date);
-    return articleDate >= sevenDaysAgo;
-  });
-}
-
-// Export the data for use in your application
-export default categorizedDataWithSummaries;
