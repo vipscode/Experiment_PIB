@@ -194,43 +194,69 @@
         margin-bottom: 1rem;
       }
     }
+    
+    /* Updated sticky note styles */
     #stickyNote {
-  position: fixed;
-  top: 100px;
-  right: 20px;
-  width: 250px;
-  background-color: #fffbe6;
-  border: 1px solid #ffe58f;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1050;
-  font-size: 0.9rem;
-}
+      background-color: rgba(255, 251, 230, 0.9);
+      border: 1px solid #ffe58f;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      font-size: 0.9rem;
+      height: 100%;
+      max-height: 160px;
+      overflow-y: auto;
+      /* Custom scrollbar for better look */
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent-blue) #fffbe6;
+    }
+    
+    #stickyNote::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    #stickyNote::-webkit-scrollbar-track {
+      background: #fffbe6;
+    }
+    
+    #stickyNote::-webkit-scrollbar-thumb {
+      background-color: var(--accent-blue);
+      border-radius: 6px;
+    }
 
-#stickyNote h5 {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  color: #ad6800;
-}
+    #stickyNote h5 {
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      color: #ad6800;
+    }
 
-#stickyNote ul {
-  padding-left: 1rem;
-}
+    #stickyNote ul {
+      padding-left: 1rem;
+      margin-bottom: 0.5rem;
+    }
 
-#stickyNote ul li {
-  margin-bottom: 0.5rem;
-}
+    #stickyNote ul li {
+      margin-bottom: 0.5rem;
+    }
 
-#stickyNote a {
-  color: #d48806;
-  text-decoration: none;
-}
+    #stickyNote a {
+      color: #d48806;
+      text-decoration: none;
+    }
 
-#stickyNote a:hover {
-  text-decoration: underline;
-}
-
+    #stickyNote a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 991px) {
+      .sticky-note-container {
+        margin-top: 1rem;
+      }
+      #stickyNote {
+        max-height: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -238,16 +264,25 @@
   <header class="dashboard-header">
     <div class="container">
       <div class="row align-items-center">
-        <div class="col-md-8">
+        <div class="col-lg-6">
           <h1 class="dashboard-title mb-2">
             <i class="fas fa-heartbeat me-2"></i>PIB Health News Dashboard
           </h1>
           <p class="mb-0">Latest health news and updates from Press Information Bureau, Government of India</p>
         </div>
-        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-          <button id="refreshBtn" class="btn btn-light">
+        <div class="col-lg-3 mt-3 mt-lg-0">
+          <button id="refreshBtn" class="btn btn-light w-100">
             <i class="fas fa-sync-alt me-2"></i>Refresh Data
           </button>
+        </div>
+        <div class="col-lg-3 sticky-note-container mt-3 mt-lg-0">
+          <div id="stickyNote">
+            <h5>Other Updates from India</h5>
+            <ul>
+              <li><a href="https://www.linkedin.com/posts/netherlands-embassy-in-india_healthcareinnovation-digitalhealth-climateaction-activity-7323296635294318593-BHRk?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAIgumcBY2WXJeqWBO4WcJvvycs0jFmbTL0" target="_blank">Health team participated in World Health Summit's Regional Meeting in India</a></li>
+              <li>RIVM visit to India expected from June 16 - 20</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -491,13 +526,5 @@
     // Initial load
     loadData();
   </script>
-  <div id="stickyNote">
-  <h5>Other Updates from India</h5>
-  <ul>
-    <li><a href="https://www.linkedin.com/posts/netherlands-embassy-in-india_healthcareinnovation-digitalhealth-climateaction-activity-7323296635294318593-BHRk?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAIgumcBY2WXJeqWBO4WcJvvycs0jFmbTL0" target="_blank">Health team participated in World Health Summit's Regional Meeting in India</a></li>
-    <li>RIVM visit to India expected from June 16 - 20</li>
-  </ul>
-</div>
-
 </body>
 </html>
