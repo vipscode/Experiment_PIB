@@ -38,12 +38,22 @@
     letter-spacing: 0.5px;
   }
 
+  .stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+  }
+
   .stats-card {
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     padding: 1.25rem;
     margin-bottom: 1.5rem;
+    flex: 1 1 calc(30% - 1rem); /* Reduce card width slightly */
+    min-width: 200px;
+    max-width: 300px;
     transition: transform 0.2s;
   }
 
@@ -189,12 +199,6 @@
     min-height: 200px;
   }
 
-  @media (max-width: 768px) {
-    .stats-card {
-      margin-bottom: 1rem;
-    }
-  }
-
   /* Sticky Note Styles */
   .sticky-note {
     position: fixed;
@@ -234,6 +238,18 @@
 
   .sticky-note ul li a:hover {
     text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .stats-card {
+      flex: 1 1 100%;
+    }
+
+    .sticky-note {
+      position: static;
+      margin: 1rem auto;
+      width: auto;
+    }
   }
 </style>
 
