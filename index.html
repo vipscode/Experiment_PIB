@@ -197,18 +197,18 @@
     
     /* Updated sticky note styles */
     #stickyNote {
-      background-color: rgba(255, 251, 230, 0.9);
-      border: 1px solid #ffe58f;
-      padding: 1rem;
+      background-color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 1.25rem;
       border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      font-size: 1rem;
       height: 100%;
-      max-height: 160px;
+      max-height: 200px;
       overflow-y: auto;
       /* Custom scrollbar for better look */
       scrollbar-width: thin;
-      scrollbar-color: var(--accent-blue) #fffbe6;
+      scrollbar-color: #60a5fa #ffffff;
     }
     
     #stickyNote::-webkit-scrollbar {
@@ -216,45 +216,62 @@
     }
     
     #stickyNote::-webkit-scrollbar-track {
-      background: #fffbe6;
+      background: #ffffff;
     }
     
     #stickyNote::-webkit-scrollbar-thumb {
-      background-color: var(--accent-blue);
+      background-color: #60a5fa;
       border-radius: 6px;
     }
 
     #stickyNote h5 {
-      margin-bottom: 0.5rem;
-      font-size: 1rem;
-      color: #ad6800;
+      margin-bottom: 0.75rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary-blue);
+      border-bottom: 2px solid var(--accent-blue);
+      padding-bottom: 0.5rem;
     }
 
     #stickyNote ul {
-      padding-left: 1rem;
-      margin-bottom: 0.5rem;
+      padding-left: 1.25rem;
+      margin-bottom: 0.75rem;
+      list-style-type: none;
     }
 
     #stickyNote ul li {
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+      position: relative;
+      line-height: 1.5;
+    }
+    
+    #stickyNote ul li:before {
+      content: "•";
+      color: var(--accent-blue);
+      font-weight: bold;
+      position: absolute;
+      left: -1.25rem;
     }
 
     #stickyNote a {
-      color: #d48806;
+      color: var(--primary-blue);
       text-decoration: none;
+      font-weight: 500;
     }
 
     #stickyNote a:hover {
       text-decoration: underline;
+      color: var(--hover-blue);
     }
     
     /* Responsive adjustments */
     @media (max-width: 991px) {
       .sticky-note-container {
-        margin-top: 1rem;
+        margin-top: 1.5rem;
       }
       #stickyNote {
         max-height: none;
+        min-height: 180px;
       }
     }
   </style>
@@ -264,23 +281,24 @@
   <header class="dashboard-header">
     <div class="container">
       <div class="row align-items-center">
-        <div class="col-lg-6">
+        <div class="col-lg-5">
           <h1 class="dashboard-title mb-2">
             <i class="fas fa-heartbeat me-2"></i>PIB Health News Dashboard
           </h1>
           <p class="mb-0">Latest health news and updates from Press Information Bureau, Government of India</p>
         </div>
-        <div class="col-lg-3 mt-3 mt-lg-0">
+        <div class="col-lg-2 mt-3 mt-lg-0">
           <button id="refreshBtn" class="btn btn-light w-100">
             <i class="fas fa-sync-alt me-2"></i>Refresh Data
           </button>
         </div>
-        <div class="col-lg-3 sticky-note-container mt-3 mt-lg-0">
+        <div class="col-lg-5 sticky-note-container mt-3 mt-lg-0">
           <div id="stickyNote">
             <h5>Other Updates from India</h5>
             <ul>
               <li><a href="https://www.linkedin.com/posts/netherlands-embassy-in-india_healthcareinnovation-digitalhealth-climateaction-activity-7323296635294318593-BHRk?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAIgumcBY2WXJeqWBO4WcJvvycs0jFmbTL0" target="_blank">Health team participated in World Health Summit's Regional Meeting in India</a></li>
               <li>RIVM visit to India expected from June 16 - 20</li>
+              <li>Ministry of Health announced new telemedicine initiative for rural areas</li>
             </ul>
           </div>
         </div>
