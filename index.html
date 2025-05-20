@@ -338,6 +338,37 @@
   .edit-preview-btn:hover {
     background-color: #218838;
   }
+
+/* Add sticky note or summary style */
+.article-summary {
+  margin-top: 1rem;
+  background-color: #f9f6f0;  /* Soft background */
+  padding: 1rem;
+  border-left: 4px solid var(--primary-blue);
+  border-radius: 5px;
+}
+
+.summary-textarea {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+}
+
+.summary-textarea:focus {
+  border-color: var(--primary-blue);
+  outline: none;
+}
+
+.summary-textarea::placeholder {
+  color: #888;
+}
+
   </style>
 </head>
 <body>
@@ -476,6 +507,41 @@
       const container = document.getElementById('newsContainer');
       const searchQuery = document.getElementById('searchInput').value.toLowerCase();
       const sortOrder = document.getElementById('sortOrder').value;
+      items.forEach(article => {
+  const el = document.createElement('div');
+  el.className = 'article';
+  
+  // Extract excerpt (first 200 chars)
+  const excerpt = article.content 
+    ? article.content.slice(0, 200) + (article.content.length > 200 ? '...' : '') 
+    : '';
+  
+  el.innerHTML = `
+    <div class="article-title">
+      <a href="${article.link}" target="_blank">${article.title}</a>
+    </div>
+    <div class="article-date">
+      <i class="far fa-calendar-alt"></i>
+      ${formatDate(article.date || article.pubDate || '')}
+    </div>
+    <div class="article-content">${excerpt}</div>
+
+    <!-- Summary section added here -->
+    <div class="article-summary">
+      <label for="summaryTextarea-${article.id}">Summary:</label>
+      <textarea id="summaryTextarea-${article.id}" class="form-control summary-textarea" placeholder="Write a short summary..." rows="3"></textarea>
+    </div>
+
+    <div class="text-end mt-2">
+      <a href="${article.link}" target="_blank" class="btn btn-sm btn-outline-primary">
+        Read More <i class="fas fa-external-link-alt ms-1"></i>
+      </a>
+    </div>
+  `;
+  
+  articleList.appendChild(el);
+});
+
 
       let filtered = articles.filter(article =>
         article.title.toLowerCase().includes(searchQuery) ||
