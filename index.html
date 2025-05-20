@@ -1,744 +1,802 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Indian Health News Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <!-- Add Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <style>
-    :root {
-      --primary-blue: #1e40af;
-      --secondary-blue: #1e3a8a;
-      --light-blue: #dbeafe;
-      --hover-blue: #3b82f6;
-      --text-blue: #1e3a8a;
-      --accent-blue: #60a5fa;
-    }
-    
-    body {
-      background-color: #f0f9ff;
-      padding-bottom: 4rem;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-      color: #333;
-    }
-    
-    .dashboard-header {
-      background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-      color: white;
-      padding: 2rem 0;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      border-radius: 0 0 10px 10px;
-    }
-    
-    .dashboard-title {
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-    
-    .stats-card {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
-      transition: transform 0.2s;
-    }
-    
-    .stats-card:hover {
-      transform: translateY(-5px);
-    }
-    
-    .stats-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--primary-blue);
-    }
-    
-    .stats-label {
-      color: #6c757d;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    .category-header {
-      font-size: 1.25rem;
-      font-weight: 600;
-      cursor: pointer;
-      padding: 0.75rem 1rem;
-      background-color: var(--light-blue);
-      border-radius: 8px;
-      margin-top: 1rem;
-      border-left: 4px solid var(--primary-blue);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background-color 0.2s;
-    }
-    
-    .category-header:hover {
-      background-color: #bfdbfe;
-    }
-    
-    .category-header i {
-      transition: transform 0.3s;
-    }
-    
-    .category-header.collapsed i {
-      transform: rotate(-90deg);
-    }
-    
-    .article {
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-      background-color: white;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      transition: box-shadow 0.2s;
-    }
-    
-    .article:hover {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .article-title a {
-      font-weight: 600;
-      text-decoration: none;
-      color: var(--text-blue);
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-    
-    .article-title a:hover {
-      color: var(--hover-blue);
-      text-decoration: underline;
-    }
-    
-    .article-date {
-      font-size: 0.85rem;
-      color: #6c757d;
-      margin-bottom: 0.5rem;
-      display: flex;
-      align-items: center;
-    }
-    
-    .article-date i {
-      margin-right: 0.5rem;
-      color: var(--accent-blue);
-    }
-    
-    .article-content {
-      color: #4b5563;
-      line-height: 1.6;
-    }
-    
-    .search-container {
-      background-color: white;
-      border-radius: 8px;
-      padding: 1.25rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      margin-bottom: 2rem;
-    }
-    
-    .form-control, .form-select {
-      border: 2px solid #e5e7eb;
-      border-radius: 6px;
-      padding: 0.75rem 1rem;
-    }
-    
-    .form-control:focus, .form-select:focus {
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 0 0.25rem rgba(96, 165, 250, 0.25);
-    }
-    
-    .search-input-group {
-      position: relative;
-    }
-    
-    .search-icon {
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #9ca3af;
-    }
-    
-    #searchInput {
-      padding-left: 2.5rem;
-    }
-    
-    footer {
-      background-color: var(--secondary-blue);
-      color: white;
-      padding: 1.5rem 0;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      text-align: center;
-      font-size: 0.9rem;
-    }
-    
-    .loading-spinner {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 200px;
-    }
-    
-    @media (max-width: 768px) {
-      .stats-card {
-        margin-bottom: 1rem;
-      }
-    }
-    
-    /* Updated sticky note styles */
-    #stickyNote {
-      background-color: white;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 1.25rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      font-size: 1rem;
-      height: 100%;
-      max-height: 200px;
-      overflow-y: auto;
-      color: #333333; /* Adding text color for all content */
-      /* Custom scrollbar for better look */
-      scrollbar-width: thin;
-      scrollbar-color: #60a5fa #ffffff;
-    }
-    
-    #stickyNote::-webkit-scrollbar {
-      width: 6px;
-    }
-    
-    #stickyNote::-webkit-scrollbar-track {
-      background: #ffffff;
-    }
-    
-    #stickyNote::-webkit-scrollbar-thumb {
-      background-color: #60a5fa;
-      border-radius: 6px;
-    }
-
-    #stickyNote h5 {
-      margin-bottom: 0.75rem;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--primary-blue);
-      border-bottom: 2px solid var(--accent-blue);
-      padding-bottom: 0.5rem;
-    }
-
-    #stickyNote ul {
-      padding-left: 1.25rem;
-      margin-bottom: 0.75rem;
-      list-style-type: none;
-    }
-
-    #stickyNote ul li {
-      margin-bottom: 0.75rem;
-      position: relative;
-      line-height: 1.5;
-    }
-    
-    #stickyNote ul li:before {
-      content: "•";
-      color: var(--accent-blue);
-      font-weight: bold;
-      position: absolute;
-      left: -1.25rem;
-    }
-
-    #stickyNote a {
-      color: var(--primary-blue);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    #stickyNote a:hover {
-      text-decoration: underline;
-      color: var(--hover-blue);
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 991px) {
-      .sticky-note-container {
-        margin-top: 1.5rem;
-      }
-      #stickyNote {
-        max-height: none;
-        min-height: 180px;
-      }
-    }
-
- .article-preview {
-    background-color: #f9f6f0;
-    border-left: 3px solid #007bff;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    font-size: 14px;
-    line-height: 1.4;
-    color: #555;
-  }
-  
-  /* Editor for preview content */
-  .preview-editor {
-    margin-top: 5px;
-  }
-  
-  .preview-editor button {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    padding: 3px 8px;
-    font-size: 12px;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  .preview-editor button:hover {
-    background-color: #5a6268;
-  }
-  
-  .preview-textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-family: inherit;
-    margin-bottom: 5px;
-    resize: vertical;
-  }
-  
-  /* Hide editor by default */
-  .editor-container {
-    display: none;
-    margin-top: 8px;
-  }
-  
-  /* Button styles for edit/save */
-  .edit-preview-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 3px 8px;
-    font-size: 12px;
-    border-radius: 3px;
-    margin-left: 5px;
-    cursor: pointer;
-  }
-  
-  .edit-preview-btn:hover {
-    background-color: #218838;
-  }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Explorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            padding-top: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: #0d6efd;
+        }
+        
+        .navigation {
+            margin-bottom: 30px;
+        }
+        
+        .category-nav {
+            display: flex;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .category-nav::-webkit-scrollbar {
+            height: 5px;
+        }
+        
+        .category-nav::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .category-nav::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        
+        .category-nav::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        .category-nav .nav-link {
+            white-space: nowrap;
+            margin-right: 5px;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.9rem;
+        }
+        
+        .article-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .article-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .article-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .article-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .article-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .article-metadata {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .article-description {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            flex-grow: 1;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        
+        .read-more-btn {
+            text-align: center;
+            padding: 8px 0;
+            background-color: #0d6efd;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+            display: block;
+            width: 100%;
+        }
+        
+        .read-more-btn:hover {
+            background-color: #0b5ed7;
+            color: white;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        
+        .search-container {
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            border-radius: 20px;
+            padding-left: 15px;
+        }
+        
+        .search-btn {
+            border-radius: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .article-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Pagination styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .pagination li {
+            margin: 0 5px;
+        }
+        
+        .pagination button {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            padding: 8px 16px;
+            border-radius: 5px;
+            color: #0d6efd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination button:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .pagination button.active {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+        
+        .pagination button:disabled {
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #0d6efd;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        
+        .back-to-top:hover {
+            background-color: #0b5ed7;
+        }
+        
+        /* Style for the article preview box */
+        .article-preview {
+            background-color: #f9f6f0;
+            border-left: 3px solid #007bff;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 14px;
+            line-height: 1.4;
+            color: #555;
+        }
+        
+        /* Editor for preview content */
+        .preview-editor {
+            margin-top: 5px;
+        }
+        
+        .preview-editor button {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            font-size: 12px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .preview-editor button:hover {
+            background-color: #5a6268;
+        }
+        
+        .preview-textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            margin-bottom: 5px;
+            resize: vertical;
+        }
+        
+        /* Hide editor by default */
+        .editor-container {
+            display: none;
+            margin-top: 8px;
+        }
+        
+        /* Button styles for edit/save */
+        .edit-preview-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            font-size: 12px;
+            border-radius: 3px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        
+        .edit-preview-btn:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="dashboard-header">
     <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-5">
-          <h1 class="dashboard-title mb-2">
-            <i class="fas fa-heartbeat me-2"></i> Indian Health News Dashboard
-          </h1>
-          <p class="mb-0">Latest health news and updates from Press Information Bureau, Government of India</p>
+        <div class="header">
+            <h1>News Explorer</h1>
+            <p>Stay informed with the latest news from around the world</p>
         </div>
-        <div class="col-lg-2 mt-3 mt-lg-0">
-          <button id="refreshBtn" class="btn btn-light w-100">
-            <i class="fas fa-sync-alt me-2"></i>Refresh Data
-          </button>
-        </div>
-        <div class="col-lg-5 sticky-note-container mt-3 mt-lg-0">
-          <div id="stickyNote">
-            <h5>Other Updates from India</h5>
-            <ul>
-              <li>Health Counselor participated in World Health Summit's Regional Meeting in India -- <a href="https://www.linkedin.com/posts/netherlands-embassy-in-india_healthcareinnovation-digitalhealth-climateaction-activity-7323296635294318593-BHRk?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAIgumcBY2WXJeqWBO4WcJvvycs0jFmbTL0" target="_blank">LinkedIn Post</a></li>
-              <li>RIVM visit to India expected from June 16 - 20</li>
+        
+        <div class="navigation">
+            <div class="search-container mb-3">
+                <div class="input-group">
+                    <input type="text" id="searchInput" class="form-control search-input" placeholder="Search for news...">
+                    <button class="btn btn-primary search-btn" id="searchButton">Search</button>
+                </div>
+            </div>
+            
+            <ul class="nav nav-pills category-nav" id="categoryNav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-category="general">General</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-category="business">Business</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-category="technology">Technology</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-category="entertainment">Entertainment</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-category="sports">Sports</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-category="science">Science</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-category="health">Health</a>
+                </li>
             </ul>
-          </div>
         </div>
-      </div>
-    </div>
-  </header>
-
-  <div class="container">
-    <!-- Stats Cards -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="stats-card">
-          <div class="stats-value" id="totalArticles">0</div>
-          <div class="stats-label">Total Articles</div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="stats-card">
-          <div class="stats-value" id="totalCategories">0</div>
-          <div class="stats-label">Categories</div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="stats-card">
-          <div class="stats-value" id="latestDate">-</div>
-          <div class="stats-label">Latest Update</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Search & Filter Section -->
-    <div class="search-container">
-      <div class="row">
-        <div class="col-md-6 mb-3 mb-md-0">
-          <label for="searchInput" class="form-label">Search Articles</label>
-          <div class="search-input-group">
-            <i class="fas fa-search search-icon"></i>
-            <input type="text" id="searchInput" class="form-control" placeholder="Search by keyword...">
-          </div>
-        </div>
-        <div class="col-md-4 mb-3 mb-md-0">
-          <label for="sortOrder" class="form-label">Sort By</label>
-          <select id="sortOrder" class="form-select">
-            <option value="desc">Newest First</option>
-            <option value="asc">Oldest First</option>
-          </select>
-        </div>
-        <div class="col-md-2">
-          <label for="clearSearch" class="form-label">&nbsp;</label>
-          <button id="clearSearch" class="btn btn-outline-secondary w-100">Clear</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="loading-spinner">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-    </div>
-
-    <!-- News Container -->
-    <div id="newsContainer"></div>
-  </div>
-
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <p class="mb-0">© <span id="currentYear"></span> Indian Health News Dashboard | Data sourced from Press Information Bureau, Government of India</p>
-    </div>
-  </footer>
-
-  <script>
-    let articles = [];
-
-    // Set current year in footer
-    document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-    function groupByCategory(data) {
-      return data.reduce((acc, article) => {
-        const cat = article.category || "Others";
-        if (!acc[cat]) acc[cat] = [];
-        acc[cat].push(article);
-        return acc;
-      }, {});
-    }
-
-    function formatDate(dateStr) {
-      const date = new Date(dateStr);
-      if (isNaN(date)) return dateStr;
-      
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    }
-
-    function getLatestDate(articles) {
-      if (!articles.length) return "-";
-      
-      const dates = articles.map(a => new Date(a.date || a.pubDate || ''))
-                           .filter(d => !isNaN(d));
-      
-      if (!dates.length) return "-";
-      
-      const latest = new Date(Math.max(...dates));
-      return formatDate(latest);
-    }
-
-    function renderArticles() {
-      const container = document.getElementById('newsContainer');
-      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-      const sortOrder = document.getElementById('sortOrder').value;
-
-      let filtered = articles.filter(article =>
-        article.title.toLowerCase().includes(searchQuery) ||
-        (article.content && article.content.toLowerCase().includes(searchQuery))
-      );
-
-      filtered.sort((a, b) => {
-        const dateA = new Date(a.date || a.pubDate || '');
-        const dateB = new Date(b.date || b.pubDate || '');
-        return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
-      });
-
-      const grouped = groupByCategory(filtered);
-
-      container.innerHTML = '';
-      
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="alert alert-info text-center" role="alert">
-            No articles found matching your search criteria.
-          </div>
-        `;
-        return;
-      }
-
-      Object.entries(grouped).forEach(([category, items]) => {
-        const section = document.createElement('div');
-        section.className = 'category-section mb-4';
-
-        const header = document.createElement('div');
-        header.className = 'category-header';
-        header.innerHTML = `
-          <span>${category} (${items.length})</span>
-          <i class="fas fa-chevron-down"></i>
-        `;
         
-        // Initially collapsed for categories with many items
-        const isCollapsed = items.length > 5;
-        if (isCollapsed) {
-          header.classList.add('collapsed');
+        <div id="articlesContainer" class="article-container"></div>
+        
+        <div id="loadingIndicator" class="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Loading articles...</p>
+        </div>
+        
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <i class="fas fa-newspaper"></i>
+            <h3>No Articles Found</h3>
+            <p>Try adjusting your search or selecting a different category.</p>
+        </div>
+        
+        <div id="paginationContainer" class="pagination-container">
+            <ul class="pagination" id="pagination"></ul>
+        </div>
+    </div>
+    
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+        // Global variables
+        let currentCategory = 'general';
+        let currentPage = 1;
+        let totalPages = 0;
+        const articlesPerPage = 9;
+        let allArticles = [];
+        
+        // DOM elements
+        const articlesContainer = document.getElementById('articlesContainer');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const emptyState = document.getElementById('emptyState');
+        const categoryNav = document.getElementById('categoryNav');
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const pagination = document.getElementById('pagination');
+        const paginationContainer = document.getElementById('paginationContainer');
+        const backToTop = document.getElementById('backToTop');
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchNews(currentCategory);
+            setupCategoryNav();
+            setupSearch();
+            setupScrollListener();
+        });
+        
+        function setupCategoryNav() {
+            const categoryLinks = categoryNav.querySelectorAll('.nav-link');
+            categoryLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    categoryLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    currentCategory = link.getAttribute('data-category');
+                    currentPage = 1;
+                    fetchNews(currentCategory);
+                });
+            });
         }
         
-        header.addEventListener('click', () => {
-          const content = section.querySelector('.articles');
-          header.classList.toggle('collapsed');
-          content.style.display = content.style.display === 'none' ? 'block' : 'none';
-        });
-
-        const articleList = document.createElement('div');
-        articleList.className = 'articles mt-3';
-        if (isCollapsed) {
-          articleList.style.display = 'none';
+        function setupSearch() {
+            searchButton.addEventListener('click', () => {
+                performSearch();
+            });
+            
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
         }
-
-        items.forEach(article => {
-          const el = document.createElement('div');
-          el.className = 'article';
-          
-          // Extract excerpt (first 200 chars)
-          const excerpt = article.content 
-            ? article.content.slice(0, 200) + (article.content.length > 200 ? '...' : '') 
-            : '';
-          
-          el.innerHTML = `
-            <div class="article-title">
-              <a href="${article.link}" target="_blank">${article.title}</a>
-            </div>
-            <div class="article-date">
-              <i class="far fa-calendar-alt"></i>
-              ${formatDate(article.date || article.pubDate || '')}
-            </div>
-            <div class="article-content">${excerpt}</div>
-            <div class="text-end mt-2">
-              <a href="${article.link}" target="_blank" class="btn btn-sm btn-outline-primary">
-                Read More <i class="fas fa-external-link-alt ms-1"></i>
-              </a>
-            </div>
-          `;
-          articleList.appendChild(el);
-        });
-
-        section.appendChild(header);
-        section.appendChild(articleList);
-        container.appendChild(section);
-      });
-      
-      // Update stats
-      document.getElementById('totalArticles').textContent = articles.length;
-      document.getElementById('totalCategories').textContent = Object.keys(grouped).length;
-      document.getElementById('latestDate').textContent = getLatestDate(articles);
-    }
-
-    // Event listeners
-    document.getElementById('searchInput').addEventListener('input', renderArticles);
-    document.getElementById('sortOrder').addEventListener('change', renderArticles);
-    document.getElementById('clearSearch').addEventListener('click', () => {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('sortOrder').value = 'desc';
-      renderArticles();
-    });
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-      loadData();
-    });
-
-    function loadData() {
-      // Show loading spinner
-      document.getElementById('loadingSpinner').style.display = 'flex';
-      document.getElementById('newsContainer').innerHTML = '';
-      
-      fetch('data/categorized_data.json')
-        .then(response => response.json())
-        .then(data => {
-          articles = data;
-          // Hide loading spinner
-          document.getElementById('loadingSpinner').style.display = 'none';
-          renderArticles();
-        })
-        .catch(error => {
-          console.error('Error loading data:', error);
-          document.getElementById('loadingSpinner').style.display = 'none';
-          document.getElementById('newsContainer').innerHTML = `
-            <div class="alert alert-danger" role="alert">
-              Error loading data. Please try refreshing the page.
-            </div>
-          `;
-        });
-    }
-
-    // Initial load
-    loadData();
- const originalFetchNews = fetchNews;
-  
-  // Override the fetchNews function
-  fetchNews = function(category) {
-    // Call the original fetchNews function
-    originalFetchNews(category);
-    
-    // After a small delay to allow articles to load
-    setTimeout(() => {
-      // Add preview boxes to all articles that don't have them yet
-      const articles = document.querySelectorAll('.article-card');
-      articles.forEach((article, index) => {
-        if (!article.querySelector('.article-preview')) {
-          addPreviewBox(article, index);
+        
+        function performSearch() {
+            const searchTerm = searchInput.value.trim();
+            if (searchTerm) {
+                searchNews(searchTerm);
+            }
         }
-      });
-    }, 1000); // Adjust timing as needed
-  };
-  
-  // Function to add preview box to an article
-  function addPreviewBox(article, index) {
-    // Create a unique ID for this article
-    const articleId = `article-${index}-${Date.now()}`;
-    article.setAttribute('data-article-id', articleId);
-    
-    // Check if there's saved content for this article
-    const savedPreview = localStorage.getItem(articleId);
-    
-    // Get the title to use as reference
-    const titleElement = article.querySelector('h3');
-    const articleTitle = titleElement ? titleElement.textContent.trim() : 'Article';
-    
-    // Create preview box
-    const previewBox = document.createElement('div');
-    previewBox.className = 'article-preview';
-    previewBox.innerHTML = savedPreview || `Add a preview for "${articleTitle}"...`;
-    
-    // Create edit button
-    const editButton = document.createElement('button');
-    editButton.className = 'edit-preview-btn';
-    editButton.textContent = 'Edit';
-    editButton.onclick = function() {
-      toggleEditor(articleId);
-    };
-    
-    // Create editor container
-    const editorContainer = document.createElement('div');
-    editorContainer.className = 'editor-container';
-    editorContainer.id = `editor-${articleId}`;
-    
-    // Create textarea
-    const textarea = document.createElement('textarea');
-    textarea.className = 'preview-textarea';
-    textarea.id = `textarea-${articleId}`;
-    textarea.rows = 3;
-    textarea.value = savedPreview || `Add a preview for "${articleTitle}"...`;
-    
-    // Create button container
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'preview-editor';
-    
-    // Create save button
-    const saveButton = document.createElement('button');
-    saveButton.textContent = 'Save';
-    saveButton.onclick = function() {
-      savePreview(articleId);
-    };
-    
-    // Create cancel button
-    const cancelButton = document.createElement('button');
-    cancelButton.textContent = 'Cancel';
-    cancelButton.style.marginLeft = '5px';
-    cancelButton.onclick = function() {
-      toggleEditor(articleId);
-    };
-    
-    // Assemble components
-    buttonContainer.appendChild(saveButton);
-    buttonContainer.appendChild(cancelButton);
-    editorContainer.appendChild(textarea);
-    editorContainer.appendChild(buttonContainer);
-    
-    // Add to article
-    const readMoreBtn = article.querySelector('.read-more-btn');
-    if (readMoreBtn) {
-      article.insertBefore(previewBox, readMoreBtn);
-      article.insertBefore(editButton, readMoreBtn);
-      article.insertBefore(editorContainer, readMoreBtn);
-    } else {
-      article.appendChild(previewBox);
-      article.appendChild(editButton);
-      article.appendChild(editorContainer);
-    }
-  }
-  
-  // Function to toggle editor visibility
-  function toggleEditor(articleId) {
-    const editorContainer = document.getElementById(`editor-${articleId}`);
-    if (editorContainer.style.display === 'block') {
-      editorContainer.style.display = 'none';
-    } else {
-      editorContainer.style.display = 'block';
-    }
-  }
-  
-  // Function to save preview content
-  function savePreview(articleId) {
-    const textarea = document.getElementById(`textarea-${articleId}`);
-    const previewText = textarea.value;
-    
-    // Save to localStorage
-    localStorage.setItem(articleId, previewText);
-    
-    // Update displayed preview
-    const article = document.querySelector(`[data-article-id="${articleId}"]`);
-    const previewBox = article.querySelector('.article-preview');
-    previewBox.innerHTML = previewText;
-    
-    // Hide editor
-    toggleEditor(articleId);
-  }
-  
-  // Update previews when page loads
-  document.addEventListener('DOMContentLoaded', function() {
-    // Wait a bit for the initial articles to load
-    setTimeout(() => {
-      const articles = document.querySelectorAll('.article-card');
-      articles.forEach((article, index) => {
-        addPreviewBox(article, index);
-      });
-    }, 1000);
-  });
-    
-  </script>
+        
+        function setupScrollListener() {
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            });
+            
+            backToTop.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+        
+        function fetchNews(category) {
+            showLoading();
+            
+            // Fetch news by category
+            fetch(`https://saurav.tech/NewsAPI/top-headlines/category/${category}/in.json`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    allArticles = data.articles;
+                    totalPages = Math.ceil(allArticles.length / articlesPerPage);
+                    renderPagination();
+                    renderArticles(currentPage);
+                    hideLoading();
+                })
+                .catch(error => {
+                    console.error('Error fetching news:', error);
+                    hideLoading();
+                    showEmptyState();
+                });
+        }
+        
+        function searchNews(query) {
+            showLoading();
+            
+            // In a real app, we would search via API
+            // For now, let's filter the current articles
+            const filteredArticles = allArticles.filter(article => {
+                const title = article.title ? article.title.toLowerCase() : '';
+                const description = article.description ? article.description.toLowerCase() : '';
+                const content = article.content ? article.content.toLowerCase() : '';
+                query = query.toLowerCase();
+                
+                return title.includes(query) || description.includes(query) || content.includes(query);
+            });
+            
+            if (filteredArticles.length > 0) {
+                allArticles = filteredArticles;
+                totalPages = Math.ceil(allArticles.length / articlesPerPage);
+                currentPage = 1;
+                renderPagination();
+                renderArticles(currentPage);
+                hideLoading();
+            } else {
+                hideLoading();
+                showEmptyState();
+            }
+        }
+        
+        function renderArticles(page) {
+            articlesContainer.innerHTML = '';
+            emptyState.style.display = 'none';
+            
+            const startIndex = (page - 1) * articlesPerPage;
+            const endIndex = startIndex + articlesPerPage;
+            const articlesToShow = allArticles.slice(startIndex, endIndex);
+            
+            if (articlesToShow.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            articlesToShow.forEach(article => {
+                const articleCard = createArticleCard(article);
+                articlesContainer.appendChild(articleCard);
+            });
+        }
+        
+        function createArticleCard(article) {
+            const card = document.createElement('div');
+            card.className = 'article-card';
+            
+            const imageUrl = article.urlToImage || 'https://via.placeholder.com/300x200?text=No+Image';
+            
+            card.innerHTML = `
+                <img src="${imageUrl}" alt="${article.title}" class="article-image" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                <div class="article-content">
+                    <h3>${article.title || 'No Title'}</h3>
+                    <div class="article-metadata">
+                        <span>${article.source?.name || 'Unknown Source'}</span>
+                        <span>${formatDate(article.publishedAt)}</span>
+                    </div>
+                    <p class="article-description">${article.description || 'No description available.'}</p>
+                    <a href="${article.url}" target="_blank" class="read-more-btn">Read More</a>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'Unknown Date';
+            
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        
+        function renderPagination() {
+            pagination.innerHTML = '';
+            paginationContainer.style.display = totalPages > 1 ? 'flex' : 'none';
+            
+            if (totalPages <= 1) return;
+            
+            // Previous button
+            const prevItem = document.createElement('li');
+            const prevButton = document.createElement('button');
+            prevButton.innerHTML = '&laquo;';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateActivePage();
+                    renderArticles(currentPage);
+                    window.scrollTo(0, 0);
+                }
+            });
+            prevItem.appendChild(prevButton);
+            pagination.appendChild(prevItem);
+            
+            // Page numbers
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageItem = document.createElement('li');
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.toggle('active', i === currentPage);
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    updateActivePage();
+                    renderArticles(currentPage);
+                    window.scrollTo(0, 0);
+                });
+                pageItem.appendChild(pageButton);
+                pagination.appendChild(pageItem);
+            }
+            
+            // Next button
+            const nextItem = document.createElement('li');
+            const nextButton = document.createElement('button');
+            nextButton.innerHTML = '&raquo;';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateActivePage();
+                    renderArticles(currentPage);
+                    window.scrollTo(0, 0);
+                }
+            });
+            nextItem.appendChild(nextButton);
+            pagination.appendChild(nextItem);
+        }
+        
+        function updateActivePage() {
+            const pageButtons = pagination.querySelectorAll('button');
+            pageButtons.forEach(button => {
+                if (!isNaN(button.textContent)) {
+                    button.classList.toggle('active', parseInt(button.textContent) === currentPage);
+                }
+            });
+            
+            // Update prev/next buttons
+            const prevButton = pagination.querySelector('button');
+            const nextButton = pagination.querySelector('li:last-child button');
+            
+            if (prevButton) prevButton.disabled = currentPage === 1;
+            if (nextButton) nextButton.disabled = currentPage === totalPages;
+        }
+        
+        function showLoading() {
+            articlesContainer.style.display = 'none';
+            loadingIndicator.style.display = 'block';
+            emptyState.style.display = 'none';
+            paginationContainer.style.display = 'none';
+        }
+        
+        function hideLoading() {
+            articlesContainer.style.display = 'grid';
+            loadingIndicator.style.display = 'none';
+        }
+        
+        function showEmptyState() {
+            articlesContainer.style.display = 'none';
+            loadingIndicator.style.display = 'none';
+            emptyState.style.display = 'block';
+            paginationContainer.style.display = 'none';
+        }
+        
+        // Save the original fetchNews function reference
+        const originalFetchNews = fetchNews;
+        
+        // Override the fetchNews function
+        fetchNews = function(category) {
+            // Call the original fetchNews function
+            originalFetchNews(category);
+            
+            // After a small delay to allow articles to load
+            setTimeout(() => {
+                // Add preview boxes to all articles that don't have them yet
+                const articles = document.querySelectorAll('.article-card');
+                articles.forEach((article, index) => {
+                    if (!article.querySelector('.article-preview')) {
+                        addPreviewBox(article, index);
+                    }
+                });
+            }, 1000); // Adjust timing as needed
+        };
+        
+        // Function to add preview box to an article
+        function addPreviewBox(article, index) {
+            // Create a unique ID for this article
+            const articleId = `article-${index}-${Date.now()}`;
+            article.setAttribute('data-article-id', articleId);
+            
+            // Check if there's saved content for this article
+            const savedPreview = localStorage.getItem(articleId);
+            
+            // Get the title to use as reference
+            const titleElement = article.querySelector('h3');
+            const articleTitle = titleElement ? titleElement.textContent.trim() : 'Article';
+            
+            // Create preview box
+            const previewBox = document.createElement('div');
+            previewBox.className = 'article-preview';
+            previewBox.innerHTML = savedPreview || `Add a preview for "${articleTitle}"...`;
+            
+            // Create edit button
+            const editButton = document.createElement('button');
+            editButton.className = 'edit-preview-btn';
+            editButton.textContent = 'Edit';
+            editButton.onclick = function() {
+                toggleEditor(articleId);
+            };
+            
+            // Create editor container
+            const editorContainer = document.createElement('div');
+            editorContainer.className = 'editor-container';
+            editorContainer.id = `editor-${articleId}`;
+            
+            // Create textarea
+            const textarea = document.createElement('textarea');
+            textarea.className = 'preview-textarea';
+            textarea.id = `textarea-${articleId}`;
+            textarea.rows = 3;
+            textarea.value = savedPreview || `Add a preview for "${articleTitle}"...`;
+            
+            // Create button container
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'preview-editor';
+            
+            // Create save button
+            const saveButton = document.createElement('button');
+            saveButton.textContent = 'Save';
+            saveButton.onclick = function() {
+                savePreview(articleId);
+            };
+            
+            // Create cancel button
+            const cancelButton = document.createElement('button');
+            cancelButton.textContent = 'Cancel';
+            cancelButton.style.marginLeft = '5px';
+            cancelButton.onclick = function() {
+                toggleEditor(articleId);
+            };
+            
+            // Assemble components
+            buttonContainer.appendChild(saveButton);
+            buttonContainer.appendChild(cancelButton);
+            editorContainer.appendChild(textarea);
+            editorContainer.appendChild(buttonContainer);
+            
+            // Add to article
+            const readMoreBtn = article.querySelector('.read-more-btn');
+            if (readMoreBtn) {
+                article.insertBefore(previewBox, readMoreBtn);
+                article.insertBefore(editButton, readMoreBtn);
+                article.insertBefore(editorContainer, readMoreBtn);
+            } else {
+                article.appendChild(previewBox);
+                article.appendChild(editButton);
+                article.appendChild(editorContainer);
+            }
+        }
+        
+        // Function to toggle editor visibility
+        function toggleEditor(articleId) {
+            const editorContainer = document.getElementById(`editor-${articleId}`);
+            if (editorContainer.style.display === 'block') {
+                editorContainer.style.display = 'none';
+            } else {
+                editorContainer.style.display = 'block';
+            }
+        }
+        
+        // Function to save preview content
+        function savePreview(articleId) {
+            const textarea = document.getElementById(`textarea-${articleId}`);
+            const previewText = textarea.value;
+            
+            // Save to localStorage
+            localStorage.setItem(articleId, previewText);
+            
+            // Update displayed preview
+            const article = document.querySelector(`[data-article-id="${articleId}"]`);
+            const previewBox = article.querySelector('.article-preview');
+            previewBox.innerHTML = previewText;
+            
+            // Hide editor
+            toggleEditor(articleId);
+        }
+        
+        // Update previews when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait a bit for the initial articles to load
+            setTimeout(() => {
+                const articles = document.querySelectorAll('.article-card');
+                articles.forEach((article, index) => {
+                    addPreviewBox(article, index);
+                });
+            }, 1000);
+        });
+    </script>
 </body>
 </html>
