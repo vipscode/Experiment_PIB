@@ -1,188 +1,384 @@
-import os
-import requests
-from bs4 import BeautifulSoup
-import pandas as pd
-from datetime import datetime, timedelta
+from selenium import webdriver
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
-import random
-import logging
+import json
+import os
+import re
+from datetime import datetime
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('pib_scraper.log'),  # Use simple path for GitHub Actions
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+# Configuration
+geckodriver_path = r"C:\Users\vipul\geckodriver-v0.34.0-win64\geckodriver.exe"
+headless_mode = False  # Set to True to run without browser window
+wait_time = 10  # Seconds to wait for page load after applying filters
 
-# Print start message to both console and log
-print("PIB Scraper starting...")
-logger.info("PIB Scraper starting...")
+# Setup driver
+service = Service(geckodriver_path)
+options = webdriver.FirefoxOptions()
+if headless_mode:
+    options.add_argument("--headless")
+driver = webdriver.Firefox(service=service, options=options)
 
-def create_directories():
-    """Create necessary directories if they don't exist."""
-    # Create directories immediately in the current working directory
-    # This is more reliable for GitHub Actions
-    base_dir = os.path.join(os.getcwd(), 'data')
-    
-    dirs = [
-        base_dir,
-        os.path.join(base_dir, 'raw'),
-        os.path.join(base_dir, 'processed')
-    ]
-    
-    for directory in dirs:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-            print(f"Created directory: {directory}")  # Print directly as well as log
-            logger.info(f"Created directory: {directory}")
-    
-    print(f"Base data directory: {base_dir}")  # Print directory for debugging
-    print(f"Current working directory: {os.getcwd()}")
-    print(f"Directory contents: {os.listdir(os.getcwd())}")
-    
-    return base_dir  # Return the base data directory
+# Function to clean text
+def clean_text(text):
+    if text is None:
+        return ""
+    return re.sub(r'\s+', ' ', text).strip()
 
-def get_news_links(url, date_str):
-    """Get all news links from the PIB archive for a specific date."""
-    try:
-        # Add random delay to avoid being blocked
-        time.sleep(random.uniform(1, 3))
-        
-        response = requests.get(url)
-        if response.status_code != 200:
-            logger.error(f"Failed to fetch URL {url}: Status code {response.status_code}")
-            return []
-        
-        soup = BeautifulSoup(response.content, 'html.parser')
-        news_sections = soup.find_all('div', class_='content')
-        
-        all_links = []
-        for section in news_sections:
-            links = section.find_all('a')
-            for link in links:
-                href = link.get('href')
-                if href and '/photo' not in href and href.startswith('/'):
-                    # Convert relative links to absolute URLs
-                    absolute_link = f"https://pib.gov.in{href}"
-                    all_links.append(absolute_link)
-        
-        logger.info(f"Found {len(all_links)} news links for date {date_str}")
-        return all_links
-    
-    except Exception as e:
-        logger.error(f"Error fetching news links for {date_str}: {str(e)}")
-        return []
-
-def extract_news_content(url):
-    """Extract content from a news article URL."""
-    try:
-        # Add random delay to avoid being blocked
-        time.sleep(random.uniform(1, 3))
-        
-        response = requests.get(url)
-        if response.status_code != 200:
-            logger.error(f"Failed to fetch article {url}: Status code {response.status_code}")
-            return None
-        
-        soup = BeautifulSoup(response.content, 'html.parser')
-        
-        # Extract title
-        title_element = soup.find('h3', class_='release-title')
-        title = title_element.text.strip() if title_element else "No title found"
-        
-        # Extract date
-        date_element = soup.find('div', class_='ReleaseDateSubHeaddateTime')
-        date = date_element.text.strip() if date_element else "No date found"
-        
-        # Extract ministry
-        ministry_element = soup.find('div', class_='MinistryNameSubhead')
-        ministry = ministry_element.text.strip() if ministry_element else "No ministry found"
-        
-        # Extract content
-        content_element = soup.find('div', class_='PrintContent')
-        content = content_element.text.strip() if content_element else "No content found"
-        
-        return {
-            'title': title,
-            'date': date,
-            'ministry': ministry,
-            'content': content,
-            'url': url
-        }
-    
-    except Exception as e:
-        logger.error(f"Error extracting content from {url}: {str(e)}")
+# Function to extract date in a standardized format
+def extract_date(text):
+    if not text:
         return None
+    
+    # Try to extract date using patterns
+    date_patterns = [
+        r'(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})',  # DD/MM/YYYY or DD-MM-YYYY
+        r'(\d{1,2})\s+([A-Za-z]+)\s+(\d{2,4})'   # DD Month YYYY
+    ]
+    
+    for pattern in date_patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            return match.group(0)
+    
+    return None
 
-def scrape_date_range(start_date, end_date):
-    """Scrape news articles for a range of dates."""
-    base_dir = create_directories()
-    
-    # Convert string dates to datetime objects if they are strings
-    if isinstance(start_date, str):
-        start_date = datetime.strptime(start_date, '%d-%m-%Y')
-    if isinstance(end_date, str):
-        end_date = datetime.strptime(end_date, '%d-%m-%Y')
-    
-    current_date = start_date
-    all_articles = []
-    
-    while current_date <= end_date:
-        date_str = current_date.strftime('%d-%m-%Y')
-        url = f"https://pib.gov.in/AllReleasem.aspx?MenuId=3&Date={date_str}"
-        
-        logger.info(f"Scraping news for date: {date_str}")
-        news_links = get_news_links(url, date_str)
-        
-        date_articles = []
-        for link in news_links:
-            article = extract_news_content(link)
-            if article:
-                date_articles.append(article)
-        
-        # Save daily articles
-        if date_articles:
-            daily_df = pd.DataFrame(date_articles)
-            output_file = os.path.join(base_dir, 'raw', f"pib_news_{current_date.strftime('%Y%m%d')}.csv")
-            daily_df.to_csv(output_file, index=False, encoding='utf-8')
-            logger.info(f"Saved {len(date_articles)} articles for {date_str} to {output_file}")
-            
-            all_articles.extend(date_articles)
-        
-        current_date += timedelta(days=1)
-    
-    # Save all articles to a combined file
-    if all_articles:
-        combined_df = pd.DataFrame(all_articles)
-        output_file = os.path.join(base_dir, 'processed', f"pib_news_{start_date.strftime('%Y%m%d')}_to_{end_date.strftime('%Y%m%d')}.csv")
-        combined_df.to_csv(output_file, index=False, encoding='utf-8')
-        logger.info(f"Saved combined {len(all_articles)} articles to {output_file}")
-    
-    return all_articles
-
-if __name__ == "__main__":
-    # For GitHub Actions testing, just scrape 1 day to make it faster
-    end_date = datetime.today()
-    start_date = end_date - timedelta(days=1)  # Just scrape 1 day for testing
-    
-    logger.info(f"Starting scraping from {start_date.strftime('%d-%m-%Y')} to {end_date.strftime('%d-%m-%Y')}")
-    print(f"Scraping dates: {start_date.strftime('%d-%m-%Y')} to {end_date.strftime('%d-%m-%Y')}")
+# Function to parse and standardize date for comparison
+def parse_date(date_str):
+    if not date_str:
+        return None
     
     try:
-        articles = scrape_date_range(start_date, end_date)
-        logger.info(f"Scraping completed. Total articles scraped: {len(articles)}")
-        print(f"Scraping completed. Total articles scraped: {len(articles)}")
-    except Exception as e:
-        error_msg = f"Error in main execution: {str(e)}"
-        logger.error(error_msg)
-        print(f"ERROR: {error_msg}")
+        # Check format with numeric month (DD/MM/YYYY)
+        match = re.search(r'(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})', date_str)
+        if match:
+            day, month, year = match.groups()
+            # Ensure 4-digit year
+            if len(year) == 2:
+                year = '20' + year
+            return datetime(int(year), int(month), int(day))
         
-    # List created files for verification
-    print("Created files:")
-    for root, dirs, files in os.walk("data"):
-        for file in files:
-            print(os.path.join(root, file))
+        # Check format with text month (DD Month YYYY)
+        match = re.search(r'(\d{1,2})\s+([A-Za-z]+)\s+(\d{2,4})', date_str, re.IGNORECASE)
+        if match:
+            day, month_name, year = match.groups()
+            month_map = {
+                'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+                'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12
+            }
+            month = month_map.get(month_name.lower()[:3], 1)  # Default to January if unknown
+            return datetime(int(year), month, int(day))
+    except:
+        pass
+    
+    return None
+
+def format_date(date_obj):
+    if not date_obj:
+        return "Unknown"
+    return date_obj.strftime("%d %b %Y")
+
+try:
+    print("Opening PIB website...")
+    driver.get("https://pib.gov.in/allRel.aspx?reg=3&lang=1")
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+    
+    # Apply filters
+    print("Applying filters...")
+    
+    # Day filter (All days)
+    day_dropdown = driver.find_element(By.ID, "ContentPlaceHolder1_ddlday")
+    Select(day_dropdown).select_by_value("0")
+    time.sleep(2)
+    
+    # Month filter(put any value for the month, 4 = april etc.)
+    month_dropdown = driver.find_element(By.ID, "ContentPlaceHolder1_ddlMonth")
+    Select(month_dropdown).select_by_value("5")
+    time.sleep(2)
+    
+    # Year filter (2025)
+    year_dropdown = driver.find_element(By.ID, "ContentPlaceHolder1_ddlYear")
+    Select(year_dropdown).select_by_value("2025")
+    time.sleep(2)
+    
+    # Ministry filter (Health)
+    ministry_dropdown = driver.find_element(By.ID, "ContentPlaceHolder1_ddlMinistry")
+    Select(ministry_dropdown).select_by_value("31")
+    
+    # Wait for content to load after filters
+    print(f"Waiting {wait_time} seconds for results to load...")
+    time.sleep(wait_time)
+    
+    # ========== APPROACH 1: Look for table rows that contain both date and news items ==========
+    print("\nATTEMPT 1: Searching for news items in table format...")
+    news_items = []
+    
+    try:
+        # First, look for tables or lists that contain news items
+        tables = driver.find_elements(By.TAG_NAME, "table")
+        for table in tables:
+            try:
+                # Check if this looks like a news table
+                rows = table.find_elements(By.TAG_NAME, "tr")
+                if len(rows) <= 1:  # Skip tables with just headers
+                    continue
+                
+                print(f"Found table with {len(rows)} rows")
+                
+                for row in rows:
+                    try:
+                        # Most PIB tables have date in first column and title/link in second
+                        cells = row.find_elements(By.TAG_NAME, "td")
+                        if len(cells) < 2:
+                            continue
+                            
+                        date_cell = cells[0]
+                        title_cell = cells[1]
+                        
+                        date_text = clean_text(date_cell.text)
+                        date_val = extract_date(date_text)
+                        
+                        # Look for links in the title cell
+                        links = title_cell.find_elements(By.TAG_NAME, "a")
+                        if links:
+                            link = links[0]
+                            url = link.get_attribute("href")
+                            title = clean_text(link.text)
+                            
+                            if url and title and date_val:
+                                news_items.append({
+                                    'title': title,
+                                    'date': date_val,
+                                    'link': url,
+                                    'source': 'table'
+                                })
+                    except Exception as e:
+                        continue
+            except:
+                continue
+        
+        print(f"Found {len(news_items)} items in tables")
+    except Exception as e:
+        print(f"Error in table search: {e}")
+    
+    # ========== APPROACH 2: Look for news items in standardized DIV structure ==========
+    if len(news_items) < 5:  # If we didn't find many items in tables, try div approach
+        print("\nATTEMPT 2: Searching for news items in div structure...")
+        
+        # Look for common containers that hold news items
+        containers = driver.find_elements(By.XPATH, 
+            "//*[contains(@class, 'content') or contains(@class, 'news') or contains(@class, 'list')]")
+        
+        for container in containers:
+            try:
+                # Get all links in the container
+                links = container.find_elements(By.TAG_NAME, "a")
+                for link in links:
+                    try:
+                        url = link.get_attribute("href")
+                        title = clean_text(link.text)
+                        
+                        # Skip navigation and empty links
+                        if not url or not title or len(title) < 10 or url.endswith('#'):
+                            continue
+                            
+                        # Check if this looks like a news link
+                        if "release" not in url.lower() and "newsite" not in url.lower():
+                            continue
+                        
+                        # Try to find a date near this link
+                        date_val = None
+                        
+                        # Method 1: Check parent or parent's siblings for date
+                        parent = link.find_element(By.XPATH, "./parent::*")
+                        parent_text = clean_text(parent.text)
+                        parent_date = extract_date(parent_text)
+                        if parent_date:
+                            date_val = parent_date
+                        
+                        # Method 2: Check siblings
+                        if not date_val:
+                            try:
+                                siblings = parent.find_elements(By.XPATH, "./preceding-sibling::*[1] | ./following-sibling::*[1]")
+                                for sibling in siblings:
+                                    sibling_text = clean_text(sibling.text)
+                                    sibling_date = extract_date(sibling_text)
+                                    if sibling_date:
+                                        date_val = sibling_date
+                                        break
+                            except:
+                                pass
+                        
+                        # Method 3: Check for date in small text or span near the link
+                        if not date_val:
+                            try:
+                                date_elements = driver.find_elements(By.XPATH, 
+                                    "//small[contains(text(), '/') or contains(text(), 'Jan')] | " +
+                                    "//span[contains(text(), '/') or contains(text(), 'Jan')]")
+                                
+                                link_pos = link.location
+                                closest_date = None
+                                min_distance = float('inf')
+                                
+                                for date_elem in date_elements:
+                                    try:
+                                        date_pos = date_elem.location
+                                        # Calculate vertical distance
+                                        distance = abs(date_pos['y'] - link_pos['y'])
+                                        if distance < min_distance and distance < 100:  # Within 100px vertically
+                                            min_distance = distance
+                                            date_text = clean_text(date_elem.text)
+                                            closest_date = extract_date(date_text)
+                                    except:
+                                        continue
+                                
+                                if closest_date:
+                                    date_val = closest_date
+                            except:
+                                pass
+                        
+                        # If we have a valid URL, title, and date, add to our list
+                        if url and title and date_val:
+                            # Check if this is a duplicate before adding
+                            is_duplicate = False
+                            for item in news_items:
+                                if item['link'] == url:
+                                    is_duplicate = True
+                                    break
+                            
+                            if not is_duplicate:
+                                news_items.append({
+                                    'title': title,
+                                    'date': date_val,
+                                    'link': url,
+                                    'source': 'div'
+                                })
+                    except:
+                        continue
+            except:
+                continue
+        
+        print(f"Found {len(news_items)} total news items after div search")
+    
+    # ========== APPROACH 3: Direct search for all links with release IDs ==========
+    if len(news_items) < 10:  # If we still don't have enough items
+        print("\nATTEMPT 3: Direct search for release links...")
+        
+        # Look specifically for links that contain releaseId
+        release_links = driver.find_elements(By.XPATH, "//a[contains(@href, 'releaseId') or contains(@href, 'release.aspx')]")
+        print(f"Found {len(release_links)} direct release links")
+        
+        # Process only links not already in our list
+        existing_urls = {item['link'] for item in news_items}
+        
+        for link in release_links:
+            try:
+                url = link.get_attribute("href")
+                title = clean_text(link.text)
+                
+                # Skip already processed links
+                if url in existing_urls or not title or len(title) < 10:
+                    continue
+                
+                # For direct approach, we'll use the whole page's date context
+                date_val = None
+                
+                # Find nearby date elements
+                try:
+                    # Get link position
+                    link_pos = link.location
+                    
+                    # Find all elements that might contain dates
+                    date_elements = driver.find_elements(By.XPATH, 
+                        "//*[contains(text(), '/') or contains(text(), 'Jan') or " +
+                        "contains(text(), 'Feb') or contains(text(), 'Mar')]")
+                    
+                    min_distance = float('inf')
+                    for date_elem in date_elements:
+                        try:
+                            date_pos = date_elem.location
+                            distance = abs(date_pos['y'] - link_pos['y'])
+                            
+                            if distance < min_distance and distance < 150:  # More flexible distance
+                                date_text = clean_text(date_elem.text)
+                                extracted_date = extract_date(date_text)
+                                if extracted_date:
+                                    min_distance = distance
+                                    date_val = extracted_date
+                        except:
+                            continue
+                except:
+                    pass
+                
+                # If we have a valid date, add the item
+                if date_val:
+                    news_items.append({
+                        'title': title,
+                        'date': date_val,
+                        'link': url,
+                        'source': 'direct'
+                    })
+                    existing_urls.add(url)
+            except:
+                continue
+                
+        print(f"Found {len(news_items)} total news items after direct link search")
+    
+    # Process and standardize dates
+    for item in news_items:
+        date_obj = parse_date(item['date'])
+        if date_obj:
+            item['date'] = format_date(date_obj)
+        else:
+            item['date'] = "Unknown"
+    
+    # Sort news items by date (most recent first)
+    def get_date_for_sorting(item):
+        date_str = item.get('date', 'Unknown')
+        if date_str == "Unknown":
+            return datetime(1900, 1, 1)  # Default old date for unknown
+        
+        date_obj = parse_date(date_str)
+        return date_obj if date_obj else datetime(1900, 1, 1)
+    
+    news_items = sorted(news_items, key=get_date_for_sorting, reverse=True)
+    
+    # Remove duplicate links (keep the first occurrence)
+    unique_links = set()
+    unique_news_items = []
+    for item in news_items:
+        if item['link'] not in unique_links:
+            unique_links.add(item['link'])
+            # Remove the metadata field before saving
+            if 'source' in item:
+                del item['source']
+            unique_news_items.append(item)
+    
+    # Print found items for review
+    print("\nFound news items:")
+    for i, item in enumerate(unique_news_items):
+        print(f"{i+1}. {item['title'][:50]}... ({item['date']})")
+    
+    # Save to data.json
+    output_file = 'data.json'
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(unique_news_items, f, ensure_ascii=False, indent=4)
+    
+    print(f"\nSaved {len(unique_news_items)} unique news items to {os.path.abspath(output_file)}")
+    
+    if len(unique_news_items) == 0:
+        print("\nNo news items found. Possible reasons:")
+        print("1. There might be no news for the selected filters")
+        print("2. The website structure may have changed")
+        print("3. The wait time after applying filters might need to be increased")
+    
+except Exception as e:
+    print(f"An error occurred: {e}")
+
+finally:
+    # Always close the driver
+    print("Closing browser...")
+    driver.quit()
