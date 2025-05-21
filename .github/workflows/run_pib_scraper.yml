@@ -21,12 +21,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests beautifulsoup4 pandas
         
-    - name: Run PIB scraper
+    - name: Run minimal test script
       run: |
         # Create directories first
         mkdir -p data/raw data/processed
-        # Run the script
-        python pib_scraper.py
+        # Run the minimal test script
+        python minimal_test_script.py
         # Debug output
         echo "Files in current directory:"
         ls -la
