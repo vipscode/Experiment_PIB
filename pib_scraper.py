@@ -12,29 +12,39 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pib_scraper.log')),
+        logging.FileHandler('pib_scraper.log'),  # Use simple path for GitHub Actions
         logging.StreamHandler()
     ]
 )
 logger = logging.getLogger(__name__)
 
+# Print start message to both console and log
+print("PIB Scraper starting...")
+logger.info("PIB Scraper starting...")
+
 def create_directories():
     """Create necessary directories if they don't exist."""
-    # Use relative paths based on the script's location
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # Create directories immediately in the current working directory
+    # This is more reliable for GitHub Actions
+    base_dir = os.path.join(os.getcwd(), 'data')
     
     dirs = [
-        os.path.join(base_dir, 'data'),
-        os.path.join(base_dir, 'data', 'raw'),
-        os.path.join(base_dir, 'data', 'processed')
+        base_dir,
+        os.path.join(base_dir, 'raw'),
+        os.path.join(base_dir, 'processed')
     ]
     
     for directory in dirs:
         if not os.path.exists(directory):
             os.makedirs(directory)
+            print(f"Created directory: {directory}")  # Print directly as well as log
             logger.info(f"Created directory: {directory}")
     
-    return dirs[0]  # Return the base data directory
+    print(f"Base data directory: {base_dir}")  # Print directory for debugging
+    print(f"Current working directory: {os.getcwd()}")
+    print(f"Directory contents: {os.listdir(os.getcwd())}")
+    
+    return base_dir  # Return the base data directory
 
 def get_news_links(url, date_str):
     """Get all news links from the PIB archive for a specific date."""
@@ -155,11 +165,24 @@ def scrape_date_range(start_date, end_date):
     return all_articles
 
 if __name__ == "__main__":
-    # Example usage
-    # Scrape last 7 days
+    # For GitHub Actions testing, just scrape 1 day to make it faster
     end_date = datetime.today()
-    start_date = end_date - timedelta(days=7)
+    start_date = end_date - timedelta(days=1)  # Just scrape 1 day for testing
     
     logger.info(f"Starting scraping from {start_date.strftime('%d-%m-%Y')} to {end_date.strftime('%d-%m-%Y')}")
-    articles = scrape_date_range(start_date, end_date)
-    logger.info(f"Scraping completed. Total articles scraped: {len(articles)}")
+    print(f"Scraping dates: {start_date.strftime('%d-%m-%Y')} to {end_date.strftime('%d-%m-%Y')}")
+    
+    try:
+        articles = scrape_date_range(start_date, end_date)
+        logger.info(f"Scraping completed. Total articles scraped: {len(articles)}")
+        print(f"Scraping completed. Total articles scraped: {len(articles)}")
+    except Exception as e:
+        error_msg = f"Error in main execution: {str(e)}"
+        logger.error(error_msg)
+        print(f"ERROR: {error_msg}")
+        
+    # List created files for verification
+    print("Created files:")
+    for root, dirs, files in os.walk("data"):
+        for file in files:
+            print(os.path.join(root, file))
