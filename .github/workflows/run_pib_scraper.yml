@@ -28,12 +28,22 @@ jobs:
     - name: Run PIB scraper
       run: |
         python pib_scraper.py
+        # Create directories if they don't exist (in case script fails before creating them)
+        mkdir -p data/raw data/processed
+        # Create empty log file if it doesn't exist
+        touch pib_scraper.log
+        # List directory contents for debugging
+        echo "Directory structure:"
+        find . -type d | sort
+        echo "Files created:"
+        find . -type f -name "*.csv" -o -name "*.log" | sort
         
     - name: Upload scraped data
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: pib-scraped-data
         path: |
-          data/raw/
-          data/processed/
-          pib_scraper.log
+          ./data/raw/
+          ./data/processed/
+          ./pib_scraper.log
+        if-no-files-found: warn
