@@ -1,11 +1,7 @@
 name: Run PIB Scraper
 
 on:
-  # Manual trigger
   workflow_dispatch:
-  # Schedule to run daily at 00:00 UTC (uncomment when ready)
-  # schedule:
-  #   - cron: '0 0 * * *'
 
 jobs:
   run-scraper:
@@ -13,12 +9,12 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
       
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v2
       with:
-        python-version: '3.10'
+        python-version: '3.9'
         
     - name: Install dependencies
       run: |
@@ -27,23 +23,18 @@ jobs:
         
     - name: Run PIB scraper
       run: |
-        python pib_scraper.py
-        # Create directories if they don't exist (in case script fails before creating them)
+        # Create directories first
         mkdir -p data/raw data/processed
-        # Create empty log file if it doesn't exist
-        touch pib_scraper.log
-        # List directory contents for debugging
-        echo "Directory structure:"
-        find . -type d | sort
-        echo "Files created:"
-        find . -type f -name "*.csv" -o -name "*.log" | sort
+        # Run the script
+        python pib_scraper.py
+        # Debug output
+        echo "Files in current directory:"
+        ls -la
+        echo "Files in data directory:"
+        ls -la data || echo "data directory not found"
+        echo "Files in data/raw directory:"
+        ls -la data/raw || echo "data/raw directory not found"
+        echo "Files in data/processed directory:"
+        ls -la data/processed || echo "data/processed directory not found"
         
-    - name: Upload scraped data
-      uses: actions/upload-artifact@v2
-      with:
-        name: pib-scraped-data
-        path: |
-          ./data/raw/
-          ./data/processed/
-          ./pib_scraper.log
-        if-no-files-found: warn
+    # Skip artifact upload for now to simplify debugging
