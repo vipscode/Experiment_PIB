@@ -206,8 +206,7 @@
       height: 100%;
       max-height: 200px;
       overflow-y: auto;
-      color: #333333; /* Adding text color for all content */
-      /* Custom scrollbar for better look */
+      color: #333333;
       scrollbar-width: thin;
       scrollbar-color: #60a5fa #ffffff;
     }
@@ -276,10 +275,15 @@
       }
     }
 
-.summary-article {
- background-color: #e7f3fe;
-  border-left: 6px solid #2196F3;
-}
+    .summary-article {
+      background-color: #e7f3fe;
+      border-left: 6px solid #2196F3;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 4px;
+      font-style: italic;
+      color: #1565C0;
+    }
   </style>
 </head>
 <body>
@@ -382,6 +386,45 @@
     // Set current year in footer
     document.getElementById('currentYear').textContent = new Date().getFullYear();
 
+    // Sample data for demonstration (since we can't load external files)
+    const sampleData = [
+      {
+        "title": "Steps taken by the Government to increase surveillance and awareness of Antimicrobial Resistance (AMR)",
+        "date": "28 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116222",
+        "category": "Antimicrobial-Resistance (AMR)",
+        "summary-article": "What India is doing in AMR surveillance? Relevant for RIVM."
+      },
+      {
+        "title": "Steps taken by the Government of India to maintain quality of education in pharmacy sector",
+        "date": "28 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116221",
+        "category": "Pharmaceuticals",
+        "summary-article": "NIPERs in focus, relevant article for GMT and regulatory agencies."
+      },
+      {
+        "title": "Steps taken on Mental Health",
+        "date": "25 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114756",
+        "category": "Non-Communicable Diseases",
+        "summary-article": "Mental health for future collaboration? Relevant article for VWS."
+      },
+      {
+        "title": "ICMR Pioneers Drone-Based Cornea Transport to Revolutionize Eye Care",
+        "date": "25 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114748",
+        "category": "Medical Technologies",
+        "summary-article": "Major initiative being tested by Indian healthcare authorities in Med-tech - relevant article from GMT."
+      },
+      {
+        "title": "World Tuberculosis (TB) Day – 2025",
+        "date": "24 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114549",
+        "category": "Infectious Diseases",
+        "summary-article": "Relevant for RIVM regarding what India is doing in TB elimination."
+      }
+    ];
+
     function groupByCategory(data) {
       return data.reduce((acc, article) => {
         const cat = article.category || "Others";
@@ -421,6 +464,7 @@
 
       let filtered = articles.filter(article =>
         article.title.toLowerCase().includes(searchQuery) ||
+        (article["summary-article"] && article["summary-article"].toLowerCase().includes(searchQuery)) ||
         (article.content && article.content.toLowerCase().includes(searchQuery))
       );
 
@@ -479,8 +523,11 @@
           // Extract excerpt (first 200 chars)
           const excerpt = article.content 
             ? article.content.slice(0, 200) + (article.content.length > 200 ? '...' : '') 
-            : '';
-          const excerpt = article.summary-article 
+            : ''; 
+
+          // Get summary-article content
+          const summaryArticle = article["summary-article"] || '';
+          
           el.innerHTML = `
             <div class="article-title">
               <a href="${article.link}" target="_blank">${article.title}</a>
@@ -495,11 +542,10 @@
                 Read More <i class="fas fa-external-link-alt ms-1"></i>
               </a>
             </div>
-  
+            ${summaryArticle ? `
             <div class="summary-article">
-              <p> relevant for RIVM.......</p>
-          </div> 
-
+              <strong>Summary:</strong> ${summaryArticle}
+            </div>` : ''}
           `;
           articleList.appendChild(el);
         });
@@ -532,11 +578,20 @@
       document.getElementById('loadingSpinner').style.display = 'flex';
       document.getElementById('newsContainer').innerHTML = '';
       
+      // For demonstration, using sample data
+      // In your actual implementation, uncomment the fetch code below
+      setTimeout(() => {
+        articles = sampleData;
+        document.getElementById('loadingSpinner').style.display = 'none';
+        renderArticles();
+      }, 1000);
+
+      /* 
+      // Uncomment this when your JSON is fixed:
       fetch('data/categorized_data.json')
         .then(response => response.json())
         .then(data => {
           articles = data;
-          // Hide loading spinner
           document.getElementById('loadingSpinner').style.display = 'none';
           renderArticles();
         })
@@ -549,6 +604,7 @@
             </div>
           `;
         });
+      */
     }
 
     // Initial load
