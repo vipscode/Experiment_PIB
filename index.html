@@ -386,44 +386,7 @@
     // Set current year in footer
     document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-    // Sample data for demonstration (since we can't load external files)
-    const sampleData = [
-      {
-        "title": "Steps taken by the Government to increase surveillance and awareness of Antimicrobial Resistance (AMR)",
-        "date": "28 Mar 2025",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116222",
-        "category": "Antimicrobial-Resistance (AMR)",
-        "summary-article": "What India is doing in AMR surveillance? Relevant for RIVM."
-      },
-      {
-        "title": "Steps taken by the Government of India to maintain quality of education in pharmacy sector",
-        "date": "28 Mar 2025",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116221",
-        "category": "Pharmaceuticals",
-        "summary-article": "NIPERs in focus, relevant article for GMT and regulatory agencies."
-      },
-      {
-        "title": "Steps taken on Mental Health",
-        "date": "25 Mar 2025",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114756",
-        "category": "Non-Communicable Diseases",
-        "summary-article": "Mental health for future collaboration? Relevant article for VWS."
-      },
-      {
-        "title": "ICMR Pioneers Drone-Based Cornea Transport to Revolutionize Eye Care",
-        "date": "25 Mar 2025",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114748",
-        "category": "Medical Technologies",
-        "summary-article": "Major initiative being tested by Indian healthcare authorities in Med-tech - relevant article from GMT."
-      },
-      {
-        "title": "World Tuberculosis (TB) Day – 2025",
-        "date": "24 Mar 2025",
-        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114549",
-        "category": "Infectious Diseases",
-        "summary-article": "Relevant for RIVM regarding what India is doing in TB elimination."
-      }
-    ];
+    
 
     function groupByCategory(data) {
       return data.reduce((acc, article) => {
@@ -586,8 +549,7 @@
         renderArticles();
       }, 1000);
 
-      /* 
-      // Uncomment this when your JSON is fixed:
+     
       fetch('data/categorized_data.json')
         .then(response => response.json())
         .then(data => {
@@ -604,7 +566,7 @@
             </div>
           `;
         });
-      */
+    
     }
 
     // Initial load
