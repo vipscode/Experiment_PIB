@@ -541,13 +541,7 @@
       document.getElementById('loadingSpinner').style.display = 'flex';
       document.getElementById('newsContainer').innerHTML = '';
       
-      // For demonstration, using sample data
-      // In your actual implementation, uncomment the fetch code below
-      setTimeout(() => {
-        articles = sampleData;
-        document.getElementById('loadingSpinner').style.display = 'none';
-        renderArticles();
-      }, 1000);
+     
 
      
       fetch('data/categorized_data.json')
