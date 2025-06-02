@@ -386,42 +386,140 @@
     // Set current year in footer
     document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-    // Sample data for demonstration (since we can't load external files)
-    const sampleData = [
+    // Your actual data from the JSON file
+    const actualData = [
       {
         "title": "Steps taken by the Government to increase surveillance and awareness of Antimicrobial Resistance (AMR)",
         "date": "28 Mar 2025",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116222",
         "category": "Antimicrobial-Resistance (AMR)",
-        "summary-article": "What India is doing in AMR surveillance? Relevant for RIVM."
+        "summary-article": "A National Antimicrobial Resistance (AMR) surveillance network (NARS-Net) is in place in India. NARS-Net carries out AMR-surveillance of 9 priority pathogens isolated from the identified clinical samples for the defined drug-bug combinations. The article also includes the list of labs included under the NARS-Net. Relevant article for RIVM."
       },
       {
         "title": "Steps taken by the Government of India to maintain quality of education in pharmacy sector",
         "date": "28 Mar 2025",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116221",
         "category": "Pharmaceuticals",
-        "summary-article": "NIPERs in focus, relevant article for GMT and regulatory agencies."
+        "summary-article": "The Pharmacy Council of India (PCI), a regulatory body for pharmacy education/ profession has taken measures to set minimum standards of education required for qualification as a pharmacist, inspection of pharmacy institutions. 72 pharma co-vigilance centres established by PCI in collaboration with the Indian Pharmacopoeia Commission (IPC) to strengthen medication safety. Article also highlights the use of technology such as QR codes for inspection."
       },
       {
         "title": "Steps taken on Mental Health",
         "date": "25 Mar 2025",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114756",
         "category": "Non-Communicable Diseases",
-        "summary-article": "Mental health for future collaboration? Relevant article for VWS."
+        "summary-article": "The article highlights some of the important steps India is undertaking on Mental health."
       },
       {
         "title": "ICMR Pioneers Drone-Based Cornea Transport to Revolutionize Eye Care",
         "date": "25 Mar 2025",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114748",
         "category": "Medical Technologies",
-        "summary-article": "Major initiative being tested by Indian healthcare authorities in Med-tech - relevant article from GMT."
+        "summary-article": "Successful Pilot by ICMR in collaboration with AIIMS New Delhi and Dr. Shroff's Charity Eye Hospital and with the support from Ministry of Civil Aviation demonstrated the potential of aerial medical logistics for timely and efficient cornea transplants under ICMR's i-DRONE initiative."
       },
       {
         "title": "World Tuberculosis (TB) Day – 2025",
         "date": "24 Mar 2025",
         "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114549",
         "category": "Infectious Diseases",
-        "summary-article": "Relevant for RIVM regarding what India is doing in TB elimination."
+        "summary-article": "Relevant article for RIVM regarding what India is doing in TB elimination."
+      },
+      {
+        "title": "Measures taken by the government to use AI in the public health system",
+        "date": "21 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2113683",
+        "category": "Public Health",
+        "summary-article": "AI in Health, highlights important initiatives being taken by Govt of India, relevant for public health, digital health team.."
+      },
+      {
+        "title": "Steps taken by the Government to expand healthcare infrastructure",
+        "date": "21 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2113679",
+        "category": "Health Systems and Infrastructure",
+        "summary-article": "Update on expansion of healthcare infrastrucutre."
+      },
+      {
+        "title": "Update on elimination of Trachoma and Malaria",
+        "date": "18 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2112480",
+        "category": "Infectious Diseases",
+        "summary-article": "Relevant for RIVM as well as Public Health team from GMT."
+      },
+      {
+        "title": "Steps taken under TB-Mukt Bharat Abhiyan",
+        "date": "18 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2112478",
+        "category": "Infectious Diseases",
+        "summary-article": "Another interesting article highlighing information on India's steps on TB elimination, relevant for RIVM."
+      },
+      {
+        "title": "Union Minister of State for Health and Family Welfare, Smt. Anupriya Patel inaugurates QUAD Workshop on Pandemic Preparedness for Indo-Pacific Region",
+        "date": "17 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2111705",
+        "category": "Infectious Diseases",
+        "summary-article": "Pandemic Preparedness but focuses more on Indo-Pacific region and Quad linkage."
+      },
+      {
+        "title": "Update on \"75/25\" Initiative",
+        "date": "11 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2110390",
+        "category": "Non-Communicable Diseases",
+        "summary-article": "Unique title? Focuses on hypertension and diabetes specifically."
+      },
+      {
+        "title": "Steps taken to prioritize Research on Fungal Infections",
+        "date": "11 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2110387",
+        "category": "Infectious Diseases",
+        "summary-article": "Relevant for RIVM?."
+      },
+      {
+        "title": "Steps taken to treat cases of Cancer, emanating from Cancer-Causing Rivers",
+        "date": "11 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2110384",
+        "category": "Non-Communicable Diseases",
+        "summary-article": "Linkage between water and cancers published by a government study? Interesting to know for RIVM on connecting climate change and water."
+      },
+      {
+        "title": "Union Health Minister Shri JP Nadda inaugurates third International Symposium on Health Technology Assessment 2025",
+        "date": "08 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2109392",
+        "category": "Medical Technologies",
+        "summary-article": "Health Technology Assessment, relevant for GMT?."
+      },
+      {
+        "title": "India set to launch a pioneering inter-ministerial scientific study to address zoonotic spillover risks at the human-wildlife-environment interface",
+        "date": "04 Apr 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2118855",
+        "category": "Public Health",
+        "summary-article": "One Health - scientific study on the nexus, relevant for RIVM."
+      },
+      {
+        "title": "Measures taken by the Government for detection and prevention of Cancer",
+        "date": "04 Apr 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2118795",
+        "category": "Non-Communicable Diseases",
+        "summary-article": "Early detection and prevention of cancer is the need of the hour, how is India preparing for it?."
+      },
+      {
+        "title": "Update on National Tele Mental Health Programme (NTMHP)",
+        "date": "04 Apr 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2118790",
+        "category": "Non-Communicable Diseases",
+        "summary-article": "An initaitive launched by India highlighting the importance of focus on Mental Health."
+      },
+      {
+        "title": "Update on National Leprosy Eradication Programme",
+        "date": "01 Apr 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2117214",
+        "category": "Infectious Diseases",
+        "summary-article": "Relevant for RIVM?."
+      },
+      {
+        "title": "Status of Drug Quality Testing under CDSCO",
+        "date": "01 Apr 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2117207",
+        "category": "Pharmaceuticals",
+        "summary-article": "Drugs quality being a point of focus, can be important for regulatory agencies and GMT team to go through."
       }
     ];
 
@@ -557,7 +655,7 @@
       
       // Update stats
       document.getElementById('totalArticles').textContent = articles.length;
-      document.getElementById('totalCategories').textContent = Object.keys(grouped).length;
+      document.getElementById('totalCategories').textContent = Object.keys(groupByCategory(articles)).length;
       document.getElementById('latestDate').textContent = getLatestDate(articles);
     }
 
@@ -578,17 +676,16 @@
       document.getElementById('loadingSpinner').style.display = 'flex';
       document.getElementById('newsContainer').innerHTML = '';
       
-      // For demonstration, using sample data
-      // In your actual implementation, uncomment the fetch code below
+      // Using your actual data instead of sample data
       setTimeout(() => {
-        articles = sampleData;
+        articles = actualData;
         document.getElementById('loadingSpinner').style.display = 'none';
         renderArticles();
-      }, 1000);
+      }, 500);
 
-      /* 
-      // Uncomment this when your JSON is fixed:
-      fetch('data/categorized_data.json')
+      // If you want to load from an external JSON file later, use this:
+      /*
+      fetch('categorized_data.json')
         .then(response => response.json())
         .then(data => {
           articles = data;
