@@ -284,40 +284,6 @@
       font-style: italic;
       color: #1565C0;
     }
-
-    .error-message {
-      background-color: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #dc2626;
-      padding: 1rem;
-      border-radius: 8px;
-      margin: 1rem 0;
-    }
-
-    .file-upload-section {
-      background-color: white;
-      border-radius: 8px;
-      padding: 1.25rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      margin-bottom: 2rem;
-    }
-
-    .file-upload-area {
-      border: 2px dashed #e5e7eb;
-      border-radius: 8px;
-      padding: 2rem;
-      text-align: center;
-      transition: border-color 0.3s;
-    }
-
-    .file-upload-area:hover {
-      border-color: var(--accent-blue);
-    }
-
-    .file-upload-area.dragover {
-      border-color: var(--primary-blue);
-      background-color: #f0f9ff;
-    }
   </style>
 </head>
 <body>
@@ -350,31 +316,6 @@
   </header>
 
   <div class="container">
-    <!-- File Upload Section -->
-    <div class="file-upload-section">
-      <h5 class="mb-3">Load Data</h5>
-      <div class="row">
-        <div class="col-md-8">
-          <div class="file-upload-area" id="fileUploadArea">
-            <i class="fas fa-upload fa-2x mb-2 text-muted"></i>
-            <p class="mb-2">Drop your JSON file here or click to select</p>
-            <input type="file" id="fileInput" accept=".json" style="display: none;">
-            <button class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
-              Choose File
-            </button>
-          </div>
-        </div>
-        <div class="col-md-4 mt-3 mt-md-0">
-          <p class="text-muted small mb-2">Or load from URL:</p>
-          <div class="input-group">
-            <input type="text" id="urlInput" class="form-control" placeholder="Enter JSON URL...">
-            <button class="btn btn-outline-primary" id="loadFromUrl">Load</button>
-          </div>
-        </div>
-      </div>
-      <div id="fileStatus" class="mt-2"></div>
-    </div>
-
     <!-- Stats Cards -->
     <div class="row mb-4">
       <div class="col-md-4">
@@ -422,19 +363,14 @@
     </div>
 
     <!-- Loading Spinner -->
-    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+    <div id="loadingSpinner" class="loading-spinner">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
 
     <!-- News Container -->
-    <div id="newsContainer">
-      <div class="alert alert-info text-center" role="alert">
-        <i class="fas fa-info-circle me-2"></i>
-        Please upload your JSON file or enter a URL to load the health news data.
-      </div>
-    </div>
+    <div id="newsContainer"></div>
   </div>
 
   <!-- Footer -->
@@ -449,6 +385,45 @@
 
     // Set current year in footer
     document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+    // Sample data for demonstration (since we can't load external files)
+    const sampleData = [
+      {
+        "title": "Steps taken by the Government to increase surveillance and awareness of Antimicrobial Resistance (AMR)",
+        "date": "28 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116222",
+        "category": "Antimicrobial-Resistance (AMR)",
+        "summary-article": "What India is doing in AMR surveillance? Relevant for RIVM."
+      },
+      {
+        "title": "Steps taken by the Government of India to maintain quality of education in pharmacy sector",
+        "date": "28 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2116221",
+        "category": "Pharmaceuticals",
+        "summary-article": "NIPERs in focus, relevant article for GMT and regulatory agencies."
+      },
+      {
+        "title": "Steps taken on Mental Health",
+        "date": "25 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114756",
+        "category": "Non-Communicable Diseases",
+        "summary-article": "Mental health for future collaboration? Relevant article for VWS."
+      },
+      {
+        "title": "ICMR Pioneers Drone-Based Cornea Transport to Revolutionize Eye Care",
+        "date": "25 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114748",
+        "category": "Medical Technologies",
+        "summary-article": "Major initiative being tested by Indian healthcare authorities in Med-tech - relevant article from GMT."
+      },
+      {
+        "title": "World Tuberculosis (TB) Day – 2025",
+        "date": "24 Mar 2025",
+        "link": "https://pib.gov.in/PressReleasePage.aspx?PRID=2114549",
+        "category": "Infectious Diseases",
+        "summary-article": "Relevant for RIVM regarding what India is doing in TB elimination."
+      }
+    ];
 
     function groupByCategory(data) {
       return data.reduce((acc, article) => {
@@ -504,20 +479,11 @@
       container.innerHTML = '';
       
       if (filtered.length === 0) {
-        if (articles.length === 0) {
-          container.innerHTML = `
-            <div class="alert alert-info text-center" role="alert">
-              <i class="fas fa-info-circle me-2"></i>
-              Please upload your JSON file or enter a URL to load the health news data.
-            </div>
-          `;
-        } else {
-          container.innerHTML = `
-            <div class="alert alert-warning text-center" role="alert">
-              No articles found matching your search criteria.
-            </div>
-          `;
-        }
+        container.innerHTML = `
+          <div class="alert alert-info text-center" role="alert">
+            No articles found matching your search criteria.
+          </div>
+        `;
         return;
       }
 
@@ -590,130 +556,10 @@
       });
       
       // Update stats
-      const uniqueCategories = new Set(articles.map(a => a.category || "Others")).size;
       document.getElementById('totalArticles').textContent = articles.length;
-      document.getElementById('totalCategories').textContent = uniqueCategories;
+      document.getElementById('totalCategories').textContent = Object.keys(grouped).length;
       document.getElementById('latestDate').textContent = getLatestDate(articles);
     }
-
-    function showError(message) {
-      const container = document.getElementById('newsContainer');
-      container.innerHTML = `
-        <div class="error-message">
-          <i class="fas fa-exclamation-triangle me-2"></i>
-          <strong>Error:</strong> ${message}
-        </div>
-      `;
-    }
-
-    function showStatus(message, isError = false) {
-      const status = document.getElementById('fileStatus');
-      status.innerHTML = `
-        <div class="alert ${isError ? 'alert-danger' : 'alert-success'} alert-dismissible fade show" role="alert">
-          <i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'} me-2"></i>
-          ${message}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      `;
-    }
-
-    function loadFromData(data) {
-      try {
-        // Handle both array and object formats
-        if (Array.isArray(data)) {
-          articles = data;
-        } else if (data.articles && Array.isArray(data.articles)) {
-          articles = data.articles;
-        } else {
-          throw new Error('Invalid data format. Expected an array of articles.');
-        }
-
-        if (articles.length === 0) {
-          throw new Error('No articles found in the data.');
-        }
-
-        renderArticles();
-        showStatus(`Successfully loaded ${articles.length} articles.`);
-      } catch (error) {
-        console.error('Error processing data:', error);
-        showError(error.message);
-        showStatus(error.message, true);
-      }
-    }
-
-    // File upload handlers
-    const fileInput = document.getElementById('fileInput');
-    const fileUploadArea = document.getElementById('fileUploadArea');
-
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        if (file.type !== 'application/json') {
-          showStatus('Please select a JSON file.', true);
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          try {
-            const data = JSON.parse(e.target.result);
-            loadFromData(data);
-          } catch (error) {
-            showError('Invalid JSON file. Please check the file format.');
-            showStatus('Invalid JSON file. Please check the file format.', true);
-          }
-        };
-        reader.readAsText(file);
-      }
-    });
-
-    // Drag and drop handlers
-    fileUploadArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      fileUploadArea.classList.add('dragover');
-    });
-
-    fileUploadArea.addEventListener('dragleave', (e) => {
-      e.preventDefault();
-      fileUploadArea.classList.remove('dragover');
-    });
-
-    fileUploadArea.addEventListener('drop', (e) => {
-      e.preventDefault();
-      fileUploadArea.classList.remove('dragover');
-      
-      const files = e.dataTransfer.files;
-      if (files.length > 0) {
-        fileInput.files = files;
-        fileInput.dispatchEvent(new Event('change'));
-      }
-    });
-
-    // URL loading
-    document.getElementById('loadFromUrl').addEventListener('click', async () => {
-      const url = document.getElementById('urlInput').value.trim();
-      if (!url) {
-        showStatus('Please enter a URL.', true);
-        return;
-      }
-
-      document.getElementById('loadingSpinner').style.display = 'flex';
-      
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        loadFromData(data);
-      } catch (error) {
-        console.error('Error loading from URL:', error);
-        showError(`Failed to load data from URL: ${error.message}`);
-        showStatus(`Failed to load data from URL: ${error.message}`, true);
-      } finally {
-        document.getElementById('loadingSpinner').style.display = 'none';
-      }
-    });
 
     // Event listeners
     document.getElementById('searchInput').addEventListener('input', renderArticles);
@@ -724,12 +570,45 @@
       renderArticles();
     });
     document.getElementById('refreshBtn').addEventListener('click', () => {
-      renderArticles();
+      loadData();
     });
 
-    // Initial render
-    renderArticles();
+    function loadData() {
+      // Show loading spinner
+      document.getElementById('loadingSpinner').style.display = 'flex';
+      document.getElementById('newsContainer').innerHTML = '';
+      
+      // For demonstration, using sample data
+      // In your actual implementation, uncomment the fetch code below
+      setTimeout(() => {
+        articles = sampleData;
+        document.getElementById('loadingSpinner').style.display = 'none';
+        renderArticles();
+      }, 1000);
+
+      /* 
+      // Uncomment this when your JSON is fixed:
+      fetch('data/categorized_data.json')
+        .then(response => response.json())
+        .then(data => {
+          articles = data;
+          document.getElementById('loadingSpinner').style.display = 'none';
+          renderArticles();
+        })
+        .catch(error => {
+          console.error('Error loading data:', error);
+          document.getElementById('loadingSpinner').style.display = 'none';
+          document.getElementById('newsContainer').innerHTML = `
+            <div class="alert alert-danger" role="alert">
+              Error loading data. Please try refreshing the page.
+            </div>
+          `;
+        });
+      */
+    }
+
+    // Initial load
+    loadData();
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
