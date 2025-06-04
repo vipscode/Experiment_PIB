@@ -387,7 +387,6 @@
     document.getElementById('currentYear').textContent = new Date().getFullYear();
 
     // Your actual data from the JSON file
-    /*
     const actualData = [
       {
         "title": "Steps taken by the Government to increase surveillance and awareness of Antimicrobial Resistance (AMR)",
@@ -523,7 +522,6 @@
         "summary-article": "Drugs quality being a point of focus, can be important for regulatory agencies and GMT team to go through."
       }
     ];
-    */
 
     function groupByCategory(data) {
       return data.reduce((acc, article) => {
@@ -686,7 +684,7 @@
       }, 500);
 
       // If you want to load from an external JSON file later, use this:
-      
+      /*
       fetch('categorized_data.json')
         .then(response => response.json())
         .then(data => {
@@ -703,7 +701,7 @@
             </div>
           `;
         });
-      
+      */
     }
 
     // Initial load
